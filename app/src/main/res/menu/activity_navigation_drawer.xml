@@ -1,36 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+
+    <group android:checkableBehavior="single" android:id="@+id/nav_search">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_hotel"
+            android:icon="@drawable/ic_hotel_black_24dp"
+            android:title="@string/nav_hotel" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/nav_sights"
+            android:icon="@drawable/ic_terrain_black_24dp"
+            android:title="@string/nav_sights" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:id="@+id/nav_shops"
+            android:icon="@drawable/ic_local_mall_black_24dp"
+            android:title="@string/nav_shops" />
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/nav_events"
+            android:icon="@drawable/ic_golf_course_black_24dp"
+            android:title="@string/nav_events" />
+
     </group>
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
+    <group android:checkableBehavior="single" android:id="@+id/nav_shortcuts">
+        <item
+            android:id="@+id/nav_around"
+            android:icon="@drawable/ic_my_location_black_24dp"
+            android:title="@string/nav_around" />
+        <item
+            android:id="@+id/nav_scan"
+            android:icon="@drawable/ic_photo_camera_black_24dp"
+            android:title="@string/nav_scan" />
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_person_black_24dp"
+            android:title="@string/nav_about" />
+
+    </group>
+
+
+        <item
+            android:id="@+id/nav_register"
+            android:icon="@drawable/ic_location_city_black_24dp"
+            android:title="@string/nav_register" />
+
 
 </menu>

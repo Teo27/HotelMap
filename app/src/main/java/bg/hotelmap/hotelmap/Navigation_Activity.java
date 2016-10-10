@@ -1,5 +1,6 @@
 package bg.hotelmap.hotelmap;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,34 +13,61 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 
 public class Navigation_Activity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, AdapterView.OnItemSelectedListener {
+
+    SupportMapFragment supportMapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
+
+        //create map
+        supportMapFragment = SupportMapFragment.newInstance();
+        supportMapFragment.getMapAsync(this);
+
+        //create toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //Search button stuff
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //TODO Make search
+       //         Intent intent = new Intent();
+       //         startActivity(intent);
             }
         });
+
+        //Navigation Drawer code
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+
+        //Initializing object on screens
+        mapInitialize();
+        spinnerInitialize();
     }
 
     @Override
@@ -50,6 +78,40 @@ public class Navigation_Activity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    public void mapInitialize() {
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+
+        if (!supportMapFragment.isAdded()){
+            fragmentManager.beginTransaction().add(R.id.map, supportMapFragment).commit();
+        }else{
+            fragmentManager.beginTransaction().show(supportMapFragment).commit();
+        }
+
+    }
+
+    public void galleryInitialize() {
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+
+        if (!supportMapFragment.isAdded()){
+            fragmentManager.beginTransaction().add(R.id.map, supportMapFragment).commit();
+        }else{
+            fragmentManager.beginTransaction().show(supportMapFragment).commit();
+        }
+
+    }
+
+    private void spinnerInitialize() {
+        Spinner spinner = (Spinner) findViewById(R.id.fragment_select);
+        spinner.setOnItemSelectedListener(this);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.fragment_selection_array, android.R.layout.simple_spinner_item);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setAdapter(adapter);
     }
 
     @Override
@@ -80,22 +142,42 @@ public class Navigation_Activity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if (id == R.id.nav_hotel) {
+            Toast.makeText(this,"Покажи хотели",Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_sights) {
+            Toast.makeText(this,"Покажи забележителности",Toast.LENGTH_SHORT).show();
+        }else if (id == R.id.nav_shops) {
+            Toast.makeText(this,"Покажи магазини",Toast.LENGTH_SHORT).show();
+        }else if (id == R.id.nav_events) {
+            Toast.makeText(this,"Покажи събития",Toast.LENGTH_SHORT).show();
+        }else if (id == R.id.nav_around) {
+            Toast.makeText(this,"Покажи около мен",Toast.LENGTH_SHORT).show();
+        }else if (id == R.id.nav_scan) {
+            Toast.makeText(this,"Сканирай",Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_about) {
+            Toast.makeText(this,"За нас",Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_register) {
+            Toast.makeText(this,"Регистрирай МИ",Toast.LENGTH_SHORT).show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String item = parent.getItemAtPosition(position).toString();
+        Toast.makeText(this,item,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }
