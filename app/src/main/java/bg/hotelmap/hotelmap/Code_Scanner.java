@@ -6,9 +6,9 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.SparseArray;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
@@ -23,14 +23,14 @@ import java.io.IOException;
  * Created by Teo on 11-Oct-16.
  */
 
-public class test_scan extends Activity {
-
+public class Code_Scanner extends Activity {
     SurfaceView cameraPreview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.test_scan);
+        setContentView(R.layout.scanner_layout);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         cameraPreview = (SurfaceView) findViewById(R.id.camera_preview);
         createCameraSource();
@@ -45,7 +45,7 @@ public class test_scan extends Activity {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
 
-                if (ActivityCompat.checkSelfPermission(test_scan.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(Code_Scanner.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -58,13 +58,13 @@ public class test_scan extends Activity {
 
                 if (camera!=null && cameraPreview.getHolder().getSurface()!=null) {
                     try {
-                        Toast.makeText(test_scan.this, "success", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Code_Scanner.this, "success", Toast.LENGTH_SHORT).show();
                         camera.start(cameraPreview.getHolder());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }else{
-                    Toast.makeText(test_scan.this, "bad luck", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Code_Scanner.this, "bad luck", Toast.LENGTH_SHORT).show();
                 }
             }
 

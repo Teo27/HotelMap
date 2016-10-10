@@ -13,10 +13,13 @@
     <string name="nav_sights">Sights</string>
     <string name="nav_shops">Shops</string>
     <string name="nav_events">Events</string>
+    <string name="nav_all">All</string>
     <string name="nav_around">Around me</string>
     <string name="nav_scan">Scan</string>
     <string name="nav_about">About us</string>
     <string name="nav_register">Register</string>
+
+    <string name="search_splash_screen">What would you like to see?</string>
 
     <string-array name="fragment_selection_array">
         <item>Map</item>

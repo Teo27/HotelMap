@@ -2,15 +2,123 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/logoscreen_colour"
+    android:gravity="center">
 
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/splash_search_top">
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/splash_screen_image"
-        android:src="@drawable/hotelmap_logo"
+        android:src="@drawable/logo"
+        android:scaleType="fitXY"
+        android:background="@color/logoscreen_colour"/>
+
+    <TextView
+        android:id="@+id/splash_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/splash_screen_image"
+        android:text="@string/search_splash_screen"
         android:layout_centerInParent="true"
-        android:scaleType="fitXY"/>
+        android:textSize="25sp"
+        android:textColor="#000000"/>
+</RelativeLayout>
+
+
+    <TableLayout
+        android:layout_below="@+id/splash_search_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp">
+
+        <TableRow>
+            <ImageButton
+                android:id="@+id/splash_hotels"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_hotel_black_24dp"
+                android:layout_weight=".2"
+                android:background="@drawable/btn_border_selector"/>
+
+            <ImageButton
+                android:id="@+id/splash_sights"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_terrain_black_24dp"
+                android:layout_weight=".2"
+                android:background="@drawable/btn_border_selector"/>
+
+            <ImageButton
+                android:id="@+id/splash_shops"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_local_mall_black_24dp"
+                android:layout_weight=".2"
+                android:background="@drawable/btn_border_selector"/>
+
+            <ImageButton
+                android:id="@+id/splash_events"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_golf_course_black_24dp"
+                android:layout_weight=".2"
+                android:background="@drawable/btn_border_selector"/>
+
+            <ImageButton
+                android:id="@+id/splash_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_all_inclusive_black_24dp"
+                android:layout_weight=".2"
+                android:background="@drawable/btn_border_selector"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:text="Hotels"
+                android:layout_weight=".2"
+                android:textAlignment="center"/>
+
+            <TextView
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:text="Sights"
+                android:layout_weight=".2"
+                android:textAlignment="center"/>
+
+            <TextView
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:text="Shops"
+                android:layout_weight=".2"
+                android:textAlignment="center"/>
+
+            <TextView
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:text="Events"
+                android:layout_weight=".2"
+                android:textAlignment="center"/>
+
+            <TextView
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:text="All"
+                android:layout_weight=".2"
+                android:textAlignment="center"/>
+        </TableRow>
+
+
+    </TableLayout>
+
 
 </RelativeLayout>

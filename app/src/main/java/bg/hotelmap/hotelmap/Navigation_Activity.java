@@ -20,9 +20,17 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PointOfInterest;
+import com.google.android.gms.vision.barcode.Barcode;
 
 import bg.hotelmap.hotelmap.fragments.Gallery;
 import bg.hotelmap.hotelmap.fragments.Offer;
@@ -31,11 +39,19 @@ public class Navigation_Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, AdapterView.OnItemSelectedListener {
 
     SupportMapFragment supportMapFragment;
+    private int item_selected = 4;
+    private GoogleMap map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
+
+        //get splash screen selection
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            item_selected = extras.getInt("search_value");
+        }
 
         //create map
         supportMapFragment = SupportMapFragment.newInstance();
@@ -66,9 +82,8 @@ public class Navigation_Activity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.getMenu().getItem(item_selected).setChecked(true);
         navigationView.setNavigationItemSelectedListener(this);
-
-
 
         //Initializing object on screens
         spinnerInitialize();
@@ -136,8 +151,8 @@ public class Navigation_Activity extends AppCompatActivity
             Toast.makeText(this,"Покажи около мен",Toast.LENGTH_SHORT).show();
         }else if (id == R.id.nav_scan) {
             Toast.makeText(this,"Сканирай",Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this,test_barcode.class);
-            startActivity(intent);
+            Intent intent = new Intent(this,Code_Scanner.class);
+            startActivityForResult(intent,0);
         } else if (id == R.id.nav_about) {
             Toast.makeText(this,"За нас",Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_register) {
@@ -147,11 +162,6 @@ public class Navigation_Activity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
     }
 
     @Override
@@ -182,4 +192,38 @@ public class Navigation_Activity extends AppCompatActivity
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 0){
+            if (resultCode == CommonStatusCodes.SUCCESS){
+                if(data != null){
+                    Barcode barcode = data.getParcelableExtra("barcode");
+                    Toast.makeText(this, barcode.displayValue, Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(this, "Barcode not found", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        UiSettings settings = map.getUiSettings();
+        settings.setMapToolbarEnabled(false);
+        LatLng sydney = new LatLng(-34, 151);
+        LatLng sydney2 = new LatLng(-34, 150);
+        map.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney")).showInfoWindow();
+        map.addMarker(new MarkerOptions().position(sydney2).title("Marker in Sydney2")).showInfoWindow();
+        map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
+    public boolean onMarkerClick(final Marker marker) {
+        return false;
+    }
+
+
 }

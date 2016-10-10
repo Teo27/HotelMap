@@ -19,10 +19,14 @@
             android:id="@+id/nav_events"
             android:icon="@drawable/ic_golf_course_black_24dp"
             android:title="@string/nav_events" />
+        <item
+            android:id="@+id/nav_all"
+            android:icon="@drawable/ic_all_inclusive_black_24dp"
+            android:title="@string/nav_all" />
 
     </group>
 
-    <group android:checkableBehavior="single" android:id="@+id/nav_shortcuts">
+    <group android:checkableBehavior="none" android:id="@+id/nav_shortcuts">
         <item
             android:id="@+id/nav_around"
             android:icon="@drawable/ic_my_location_black_24dp"
@@ -40,6 +44,7 @@
 
 
         <item
+            android:checkable="false"
             android:id="@+id/nav_register"
             android:icon="@drawable/ic_location_city_black_24dp"
             android:title="@string/nav_register" />
