@@ -1,5 +1,7 @@
 package bg.hotelmap.hotelmap;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -21,6 +23,9 @@ import android.widget.Toast;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+
+import bg.hotelmap.hotelmap.fragments.Gallery;
+import bg.hotelmap.hotelmap.fragments.Offer;
 
 public class Navigation_Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, AdapterView.OnItemSelectedListener {
@@ -66,7 +71,6 @@ public class Navigation_Activity extends AppCompatActivity
 
 
         //Initializing object on screens
-        mapInitialize();
         spinnerInitialize();
     }
 
@@ -78,28 +82,6 @@ public class Navigation_Activity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
-
-    public void mapInitialize() {
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-
-        if (!supportMapFragment.isAdded()){
-            fragmentManager.beginTransaction().add(R.id.map, supportMapFragment).commit();
-        }else{
-            fragmentManager.beginTransaction().show(supportMapFragment).commit();
-        }
-
-    }
-
-    public void galleryInitialize() {
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-
-        if (!supportMapFragment.isAdded()){
-            fragmentManager.beginTransaction().add(R.id.map, supportMapFragment).commit();
-        }else{
-            fragmentManager.beginTransaction().show(supportMapFragment).commit();
-        }
-
     }
 
     private void spinnerInitialize() {
@@ -154,6 +136,8 @@ public class Navigation_Activity extends AppCompatActivity
             Toast.makeText(this,"Покажи около мен",Toast.LENGTH_SHORT).show();
         }else if (id == R.id.nav_scan) {
             Toast.makeText(this,"Сканирай",Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this,test_barcode.class);
+            startActivity(intent);
         } else if (id == R.id.nav_about) {
             Toast.makeText(this,"За нас",Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_register) {
@@ -172,8 +156,26 @@ public class Navigation_Activity extends AppCompatActivity
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String item = parent.getItemAtPosition(position).toString();
-        Toast.makeText(this,item,Toast.LENGTH_SHORT).show();
+        FragmentManager fm = getFragmentManager();
+        android.support.v4.app.FragmentManager sFm = getSupportFragmentManager();
+
+        if (supportMapFragment.isAdded())
+            sFm.beginTransaction().hide(supportMapFragment).commit();
+
+        switch (position){
+            case 0:
+                if (!supportMapFragment.isAdded())
+                    sFm.beginTransaction().add(R.id.map, supportMapFragment).commit();
+                else
+                    sFm.beginTransaction().show(supportMapFragment).commit();
+                break;
+            case 1:
+                fm.beginTransaction().replace(R.id.list,new Gallery()).commit();
+                break;
+            case 2:
+                fm.beginTransaction().replace(R.id.list,new Offer()).commit();
+                break;
+        }
     }
 
     @Override
