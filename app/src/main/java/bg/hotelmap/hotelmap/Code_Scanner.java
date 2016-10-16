@@ -58,13 +58,12 @@ public class Code_Scanner extends Activity {
 
                 if (camera!=null && cameraPreview.getHolder().getSurface()!=null) {
                     try {
-                        Toast.makeText(Code_Scanner.this, "success", Toast.LENGTH_SHORT).show();
                         camera.start(cameraPreview.getHolder());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }else{
-                    Toast.makeText(Code_Scanner.this, "bad luck", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Code_Scanner.this, "There was a problem accessing the camera", Toast.LENGTH_SHORT).show();
                 }
             }
 

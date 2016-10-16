@@ -20,6 +20,11 @@
     <string name="nav_register">Register</string>
 
     <string name="search_splash_screen">What would you like to see?</string>
+    <string name="gps_enable">In order to use this feature you have to enable your GPS</string>
+
+    <string name="around_dialog_ok">OK</string>
+    <string name="around_dialog_cancel">Cancel</string>
+    <string name="around_dialog_title">Search Around Me</string>
 
     <string-array name="fragment_selection_array">
         <item>Map</item>
