@@ -31,12 +31,20 @@
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_search_category_default" />
 
+    <RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/border_click"
+    android:layout_gravity="bottom|start"
+    android:layout_margin="@dimen/fragment_select_margin">
     <Spinner
         android:id="@+id/fragment_select"
-        android:layout_width="wrap_content"
+        android:layout_width="130dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start"
-        android:layout_margin="@dimen/fragment_select_margin"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:dropDownWidth="130dp"
         app:srcCompat="@android:drawable/ic_search_category_default" />
+</RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>
