@@ -25,6 +25,22 @@
     <string name="around_dialog_ok">OK</string>
     <string name="around_dialog_cancel">Cancel</string>
     <string name="around_dialog_title">Search Around Me</string>
+    <string name="nav_currency">Currency</string>
+    <string name="nav_discount">Reserve with discount</string>
+    <string name="gal_around_me">Around Me</string>
+    <string name="gal_info">Information</string>
+    <string name="gal_site">Website</string>
+    <string name="gal_map">See On Map</string>
+    <string name="gal_reserve">Reserve with discount</string>
+    <string name="gal_desc_building">Building image</string>
+    <string name="gal_desc_type">The type of item</string>
+    <string name="gal_desc_currency">Currency</string>
+    <string name="spl_logo">Logo</string>
+    <string name="spl_hotels">Hotels</string>
+    <string name="spl_sights">Sights</string>
+    <string name="spl_shops">Shops</string>
+    <string name="spl_events">Events</string>
+    <string name="spl_all">All</string>
 
     <string-array name="fragment_selection_array">
         <item>Map</item>

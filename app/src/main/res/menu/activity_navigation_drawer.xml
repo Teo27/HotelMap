@@ -42,12 +42,17 @@
 
     </group>
 
-
+<group>
         <item
             android:checkable="false"
             android:id="@+id/nav_register"
             android:icon="@drawable/ic_location_city_black_24dp"
             android:title="@string/nav_register" />
 
-
+</group>
+    <item
+        android:checkable="false"
+        android:id="@+id/nav_discount"
+        android:icon="@drawable/ic_location_city_black_24dp"
+        android:title="@string/nav_discount" />
 </menu>

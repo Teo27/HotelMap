@@ -24,7 +24,7 @@ import java.io.IOException;
  */
 
 public class Code_Scanner extends Activity {
-    SurfaceView cameraPreview;
+    private SurfaceView cameraPreview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:layout_width="125dp"
+        android:layout_height="match_parent"
+        tools:src="@drawable/test_building"
+        android:scaleType="fitXY"
+        android:id="@+id/gallery_row_image"
+        android:contentDescription="@string/gal_desc_building"/>
+
+    <TextView
+        tools:text="City"
+        android:id="@+id/gallery_row_city"
+        android:textColor="#FFD700"
+        android:textSize="25sp"
+        android:layout_toEndOf="@+id/gallery_row_image"
+        android:layout_toRightOf="@+id/gallery_row_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        tools:text="Subtype"
+        android:id="@+id/gallery_row_subtype"
+        android:textColor="#000000"
+        android:textSize="25sp"
+        android:layout_below="@+id/gallery_row_city"
+        android:layout_toEndOf="@+id/gallery_row_image"
+        android:layout_toRightOf="@+id/gallery_row_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        tools:text="Name"
+        android:id="@+id/gallery_row_name"
+        android:textColor="#000000"
+        android:textSize="25sp"
+        android:layout_below="@+id/gallery_row_subtype"
+        android:layout_toEndOf="@+id/gallery_row_image"
+        android:layout_toRightOf="@+id/gallery_row_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+        <TextView
+            tools:text="4"
+            android:id="@+id/gallery_row_star"
+            android:textColor="#FFD700"
+            android:textSize="25sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/gallery_row_name"
+            android:layout_toEndOf="@+id/gallery_row_name"
+            android:layout_toRightOf="@+id/gallery_row_name"
+            android:drawableEnd="@drawable/ic_golden_star"
+            android:drawableRight="@drawable/ic_golden_star"/>
+
+
+    <TextView
+        tools:text="+359 123 456"
+        android:id="@+id/gallery_row_phone"
+        android:textColor="#000000"
+        android:textSize="25sp"
+        android:layout_below="@+id/gallery_row_star"
+        android:layout_toEndOf="@+id/gallery_row_image"
+        android:layout_toRightOf="@+id/gallery_row_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/gallery_row_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#FF0000"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        tools:ignore="RelativeOverlap">
+
+        <ImageView
+            android:id="@+id/gallery_row_box_type"
+            tools:src="@drawable/ic_person_black_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/gal_desc_type"/>
+
+        <ImageView
+            android:id="@+id/gallery_row_box_currency"
+            tools:src="@drawable/ic_euro_symbol_white_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/gal_desc_currency"/>
+
+        <TextView
+            android:id="@+id/gallery_row_box_price"
+            tools:text="40.00"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -17,7 +17,8 @@
         android:id="@+id/splash_screen_image"
         android:src="@drawable/logo"
         android:scaleType="fitXY"
-        android:background="@color/logoscreen_colour"/>
+        android:background="@color/logoscreen_colour"
+        android:contentDescription="@string/spl_logo"/>
 
     <TextView
         android:id="@+id/splash_search"
@@ -47,6 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_hotel_black_24dp"
+                android:contentDescription="@string/spl_hotels"
                 />
 
             <ImageButton
@@ -55,6 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_terrain_black_24dp"
+                android:contentDescription="@string/spl_sights"
                 />
 
             <ImageButton
@@ -63,6 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_local_mall_black_24dp"
+                android:contentDescription="@string/spl_shops"
                 />
 
             <ImageButton
@@ -71,6 +75,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_golf_course_black_24dp"
+                android:contentDescription="@string/spl_events"
                />
 
             <ImageButton
@@ -79,6 +84,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_all_inclusive_black_24dp"
+                android:contentDescription="@string/spl_all"
                 />
         </TableRow>
 
@@ -87,35 +93,35 @@
             <TextView
                 android:textColor="#000000"
                 android:textSize="20sp"
-                android:text="Hotels"
+                android:text="@string/spl_hotels"
                 android:layout_weight=".2"
                 android:textAlignment="center"/>
 
             <TextView
                 android:textColor="#000000"
                 android:textSize="20sp"
-                android:text="Sights"
+                android:text="@string/spl_sights"
                 android:layout_weight=".2"
                 android:textAlignment="center"/>
 
             <TextView
                 android:textColor="#000000"
                 android:textSize="20sp"
-                android:text="Shops"
+                android:text="@string/spl_shops"
                 android:layout_weight=".2"
                 android:textAlignment="center"/>
 
             <TextView
                 android:textColor="#000000"
                 android:textSize="20sp"
-                android:text="Events"
+                android:text="@string/spl_events"
                 android:layout_weight=".2"
                 android:textAlignment="center"/>
 
             <TextView
                 android:textColor="#000000"
                 android:textSize="20sp"
-                android:text="All"
+                android:text="@string/spl_all"
                 android:layout_weight=".2"
                 android:textAlignment="center"/>
         </TableRow>

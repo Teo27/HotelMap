@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/nav_language"
+        android:orderInCategory="98"
+        android:title="@string/nav_language"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/nav_currency"
+        android:orderInCategory="99"
+        android:title="@string/nav_currency"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/nav_settings"
         android:orderInCategory="100"
         android:title="@string/nav_settings"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/language"
-        android:orderInCategory="100"
-        android:title="@string/nav_language"
         app:showAsAction="never" />
 </menu>
