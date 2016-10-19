@@ -47,7 +47,7 @@
                 style="@style/splash_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_hotel_black_24dp"
+                android:src="@drawable/ic_hotel"
                 android:contentDescription="@string/spl_hotels"
                 />
 
@@ -56,7 +56,7 @@
                 style="@style/splash_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_terrain_black_24dp"
+                android:src="@drawable/ic_sight"
                 android:contentDescription="@string/spl_sights"
                 />
 
@@ -65,7 +65,7 @@
                 style="@style/splash_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_local_mall_black_24dp"
+                android:src="@drawable/ic_shop"
                 android:contentDescription="@string/spl_shops"
                 />
 
@@ -74,7 +74,7 @@
                 style="@style/splash_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_golf_course_black_24dp"
+                android:src="@drawable/ic_event"
                 android:contentDescription="@string/spl_events"
                />
 
@@ -83,7 +83,7 @@
                 style="@style/splash_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_all_inclusive_black_24dp"
+                android:src="@drawable/ic_all"
                 android:contentDescription="@string/spl_all"
                 />
         </TableRow>

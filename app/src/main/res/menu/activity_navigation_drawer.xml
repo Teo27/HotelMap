@@ -5,23 +5,23 @@
     <group android:checkableBehavior="single" android:id="@+id/nav_search">
         <item
             android:id="@+id/nav_hotel"
-            android:icon="@drawable/ic_hotel_black_24dp"
+            android:icon="@drawable/ic_hotel"
             android:title="@string/nav_hotel" />
         <item
             android:id="@+id/nav_sights"
-            android:icon="@drawable/ic_terrain_black_24dp"
+            android:icon="@drawable/ic_sight"
             android:title="@string/nav_sights" />
         <item
             android:id="@+id/nav_shops"
-            android:icon="@drawable/ic_local_mall_black_24dp"
+            android:icon="@drawable/ic_shop"
             android:title="@string/nav_shops" />
         <item
             android:id="@+id/nav_events"
-            android:icon="@drawable/ic_golf_course_black_24dp"
+            android:icon="@drawable/ic_event"
             android:title="@string/nav_events" />
         <item
             android:id="@+id/nav_all"
-            android:icon="@drawable/ic_all_inclusive_black_24dp"
+            android:icon="@drawable/ic_all"
             android:title="@string/nav_all" />
 
     </group>
@@ -29,15 +29,15 @@
     <group android:checkableBehavior="none" android:id="@+id/nav_shortcuts">
         <item
             android:id="@+id/nav_around"
-            android:icon="@drawable/ic_my_location_black_24dp"
+            android:icon="@drawable/ic_around"
             android:title="@string/nav_around" />
         <item
             android:id="@+id/nav_scan"
-            android:icon="@drawable/ic_photo_camera_black_24dp"
+            android:icon="@drawable/ic_scan"
             android:title="@string/nav_scan" />
         <item
             android:id="@+id/nav_about"
-            android:icon="@drawable/ic_person_black_24dp"
+            android:icon="@drawable/ic_about_us"
             android:title="@string/nav_about" />
 
     </group>
@@ -46,13 +46,13 @@
         <item
             android:checkable="false"
             android:id="@+id/nav_register"
-            android:icon="@drawable/ic_location_city_black_24dp"
+            android:icon="@drawable/ic_register"
             android:title="@string/nav_register" />
 
 </group>
     <item
         android:checkable="false"
         android:id="@+id/nav_discount"
-        android:icon="@drawable/ic_location_city_black_24dp"
+        android:icon="@drawable/ic_register"
         android:title="@string/nav_discount" />
 </menu>
