@@ -3,13 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="150dp">
 <RelativeLayout
-    android:id="@+id/gallery_btn_top"
+    android:id="@+id/gallery_btn_rl"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_centerInParent="true"
     android:layout_alignParentTop="true">
 
     <Button
+        android:textAllCaps="false"
         android:id="@+id/gallery_btn_around"
         android:text="@string/gal_around_me"
         android:background="#F3C546"
@@ -19,6 +20,7 @@
         android:layout_height="40dp"
         android:layout_margin="5dp"/>
     <Button
+        android:textAllCaps="false"
         android:id="@+id/gallery_btn_info"
         android:text="@string/gal_info"
         android:background="#FDB837"
@@ -30,6 +32,7 @@
         android:layout_toRightOf="@+id/gallery_btn_around"
         android:layout_toEndOf="@+id/gallery_btn_around"/>
     <Button
+        android:textAllCaps="false"
         android:id="@+id/gallery_btn_site"
         android:text="@string/gal_site"
         android:background="#FCA428"
@@ -38,9 +41,9 @@
         android:layout_width="175dp"
         android:layout_height="40dp"
         android:layout_margin="5dp"
-        android:layout_below="@+id/gallery_btn_around"
-        />
+        android:layout_below="@+id/gallery_btn_around"/>
     <Button
+        android:textAllCaps="false"
         android:id="@+id/gallery_btn_map"
         android:text="@string/gal_map"
         android:background="#F4853D"
@@ -55,15 +58,16 @@
 </RelativeLayout>
 
     <Button
+        android:textAllCaps="false"
         android:id="@+id/gallery_btn_reserve"
         android:text="@string/gal_reserve"
         android:background="#E2321D"
         android:textColor="#FFFFFF"
-        android:textSize="15sp"
+        android:textSize="17sp"
         android:layout_width="225dp"
         android:layout_height="40dp"
         android:layout_margin="5dp"
         android:layout_centerInParent="true"
-        android:layout_below="@+id/gallery_btn_top"/>
+        android:layout_below="@+id/gallery_btn_rl"/>
 
 </RelativeLayout>

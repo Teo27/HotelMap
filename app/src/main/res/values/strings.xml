@@ -1,11 +1,13 @@
 <resources>
     <string name="app_name">Hotel Map</string>
+    <string name="error">Error</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="nav_settings">Settings</string>
     <string name="nav_language">Language</string>
+    <string name="nav_currency">Currency</string>
 
     <string name="nav_slogan">Which hotel are you?</string>
     <string name="nav_email">office@hotelmap.bg</string>
@@ -18,6 +20,7 @@
     <string name="nav_scan">Scan</string>
     <string name="nav_about">About us</string>
     <string name="nav_register">Register</string>
+    <string name="nav_discount">Reserve with discount</string>
 
     <string name="search_splash_screen">What would you like to see?</string>
     <string name="gps_enable">In order to use this feature you have to enable your GPS</string>
@@ -25,8 +28,6 @@
     <string name="around_dialog_ok">OK</string>
     <string name="around_dialog_cancel">Cancel</string>
     <string name="around_dialog_title">Search Around Me</string>
-    <string name="nav_currency">Currency</string>
-    <string name="nav_discount">Reserve with discount</string>
 
     <string name="gal_around_me">Around Me</string>
     <string name="gal_info">Information</string>
@@ -44,6 +45,11 @@
     <string name="spl_shops">Shops</string>
     <string name="spl_events">Events</string>
     <string name="spl_all">All</string>
+
+    <string name="off_building_desc">Picture of the building</string>
+    <string name="off_button">Learn More</string>
+    <string name="off_link">Visit their website</string>
+    <string name="off_period">%1$s d. %2$s:%3$s:%4$s</string>
 
     <string-array name="fragment_selection_array">
         <item>Map</item>
