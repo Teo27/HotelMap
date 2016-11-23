@@ -25,7 +25,15 @@
             android:title="@string/nav_all" />
 
     </group>
+    <group android:checkableBehavior="none">
+        <item
+            android:checkable="false"
+            android:id="@+id/nav_discount"
+            android:icon="@drawable/ic_register"
+            android:title="@string/nav_discount" />
 
+
+    </group>
     <group android:checkableBehavior="none" android:id="@+id/nav_shortcuts">
         <item
             android:id="@+id/nav_around"
@@ -35,24 +43,10 @@
             android:id="@+id/nav_scan"
             android:icon="@drawable/ic_scan"
             android:title="@string/nav_scan" />
-        <item
-            android:id="@+id/nav_about"
-            android:icon="@drawable/ic_about_us"
-            android:title="@string/nav_about" />
+
 
     </group>
 
-<group>
-        <item
-            android:checkable="false"
-            android:id="@+id/nav_register"
-            android:icon="@drawable/ic_register"
-            android:title="@string/nav_register" />
 
-</group>
-    <item
-        android:checkable="false"
-        android:id="@+id/nav_discount"
-        android:icon="@drawable/ic_register"
-        android:title="@string/nav_discount" />
+
 </menu>

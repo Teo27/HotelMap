@@ -5,6 +5,8 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="nav_register">Register</string>
+    <string name="nav_about">About us</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_language">Language</string>
     <string name="nav_currency">Currency</string>
@@ -16,11 +18,9 @@
     <string name="nav_shops">Shops</string>
     <string name="nav_events">Events</string>
     <string name="nav_all">All</string>
+    <string name="nav_discount">Reserve with discount</string>
     <string name="nav_around">Around me</string>
     <string name="nav_scan">Scan</string>
-    <string name="nav_about">About us</string>
-    <string name="nav_register">Register</string>
-    <string name="nav_discount">Reserve with discount</string>
 
     <string name="search_splash_screen">What would you like to see?</string>
     <string name="gps_enable">In order to use this feature you have to enable your GPS</string>
@@ -38,6 +38,7 @@
     <string name="gal_desc_type">The type of item</string>
     <string name="gal_desc_currency">Currency</string>
     <string name="gal_phone">Ph.: %1$s</string>
+    <string name="gal_row_call">Call button</string>
 
     <string name="spl_logo">Logo</string>
     <string name="spl_hotels">Hotels</string>
@@ -50,6 +51,41 @@
     <string name="off_button">Learn More</string>
     <string name="off_link">Visit their website</string>
     <string name="off_period">%1$s d. %2$s:%3$s:%4$s</string>
+
+    <string name="map_desc_around">Around me</string>
+    <string name="map_desc_info">Information</string>
+    <string name="map_desc_site">Official website</string>
+    <string name="map_desc_reserve_discount">Reserve with discount</string>
+    <string name="map_desc_phone">Ph.: %1$s</string>
+    <string name="close">Close</string>
+    <string name="map_info_stars">Number of stars</string>
+
+    <string name="res_phone">Your phone</string>
+    <string name="res_email">Your email</string>
+    <string name="res_names">Your names</string>
+    <string name="res_arrive">Date of arrival</string>
+    <string name="res_leave">Date of leave</string>
+    <string name="res_adults">Adults</string>
+    <string name="res_children">Children</string>
+    <string name="res_age">Age</string>
+
+    <string name="desc_date">Click to choose date</string>
+    <string name="terms_and_conditions">I am familiar with the terms and conditions</string>
+
+
+    <string-array name="people_count">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
 
     <string-array name="fragment_selection_array">
         <item>Map</item>

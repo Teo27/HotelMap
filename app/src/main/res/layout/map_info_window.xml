@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/price_box2"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center|top">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/map_info_star"
+            android:layout_centerInParent="true"
+            android:layout_alignParentTop="true">
+
+            <ImageView
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/ic_golden_star"
+                android:contentDescription="@string/map_info_stars" />
+
+        </LinearLayout>
+
+        <TextView
+            tools:text="40"
+            android:layout_centerInParent="true"
+            android:id="@+id/map_info_price"
+            android:textColor="#000"
+            android:textSize="15sp"
+            android:layout_below="@+id/map_info_star"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableEnd="@drawable/ic_euro_small"
+            android:drawableRight="@drawable/ic_euro_small" />
+    </RelativeLayout>
+
+
+
+</FrameLayout>

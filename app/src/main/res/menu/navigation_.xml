@@ -2,6 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+
+    <item
+        android:checkable="false"
+        android:orderInCategory="96"
+        android:id="@+id/nav_register"
+        android:title="@string/nav_register"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/nav_about"
+        android:orderInCategory="97"
+        android:title="@string/nav_about"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/nav_language"
         android:orderInCategory="98"
@@ -19,4 +34,6 @@
         android:orderInCategory="100"
         android:title="@string/nav_settings"
         app:showAsAction="never" />
+
+
 </menu>

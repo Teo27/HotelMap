@@ -18,7 +18,7 @@
     <TextView
         tools:text="City"
         android:textStyle="bold"
-        android:id="@+id/gallery_row_city"
+        android:id="@+id/gallery_row_address"
         android:textColor="#FFD700"
         android:textSize="17sp"
         android:layout_width="wrap_content"
@@ -76,7 +76,7 @@
         android:layout_height="wrap_content"
         android:drawableEnd="@drawable/ic_golden_star"
         android:drawableRight="@drawable/ic_golden_star"
-        android:layout_below="@+id/gallery_row_city"
+        android:layout_below="@+id/gallery_row_address"
         android:layout_toEndOf="@+id/gallery_row_image"
         android:layout_toRightOf="@+id/gallery_row_image"/>
 
@@ -86,7 +86,7 @@
         android:id="@+id/gallery_row_subtype"
         android:textColor="#000000"
         android:textSize="17sp"
-        android:layout_below="@+id/gallery_row_city"
+        android:layout_below="@+id/gallery_row_address"
         android:layout_toEndOf="@+id/gallery_row_star"
         android:layout_toRightOf="@+id/gallery_row_star"
         android:layout_alignBaseline="@+id/gallery_row_star"
@@ -113,6 +113,7 @@
 
     <ImageButton
         android:id="@+id/gallery_row_call"
+        android:contentDescription="@string/gal_row_call"
         android:src="@drawable/ic_call"
         android:background="#00000000"
         android:layout_width="wrap_content"

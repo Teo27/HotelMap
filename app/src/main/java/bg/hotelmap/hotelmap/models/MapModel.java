@@ -1,95 +1,88 @@
 package bg.hotelmap.hotelmap.models;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.ClusterItem;
+
 import bg.hotelmap.hotelmap.R;
 
 /**
- * Created by Teo on 19-Oct-16.
+ * Created by Teo on 28-Oct-16.
  */
 
-public class GalleryModel {
+public class MapModel implements ClusterItem {
 
-    private String city, subtype, name;
-    private int id, star, phone;
+    private String address, subtype, name, url, phone;
+    private int id, star;
+    private double price, lat, lng;
     private Type type;
-    private double price;
 
     public enum Type {HOTEL, SHOP, SIGHT, EVENT}
 
-    public GalleryModel(String city, String subtype, String name, int star, int phone, int price, Type type) {
-        this.city = city;
+    public MapModel(String address, String subtype, String name, String url, int star, String phone, double lat, double lng, double price, Type type) {
+        this.address = address;
         this.subtype = subtype;
         this.name = name;
+        this.url = url;
         this.star = star;
         this.phone = phone;
+        this.lat = lat;
+        this.lng = lng;
         this.price = price;
         this.type = type;
     }
 
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
+    public String getAddress() {
+        return address;
     }
 
     public String getSubtype() {
         return subtype;
     }
 
-    public void setSubtype(String subtype) {
-        this.subtype = subtype;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getUrl() {
+        return url;
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public int getStar() {
         return star;
     }
 
-    public void setStar(int star) {
-        this.star = star;
-    }
-
-    public int getPhone() {
+    public String getPhone() {
         return phone;
-    }
-
-    public void setPhone(int phone) {
-        this.phone = phone;
     }
 
     public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
-        this.price = price;
+    public double getLat() {
+        return lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+    public LatLng getPosition() {
+
+        LatLng position = new LatLng(getLat(),getLng());
+
+        return position;
     }
 
     public Type getType() {
         return type;
     }
 
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    private static int typeToDrawable(Type type){
+    private static int typeToDrawable(MapModel.Type type){
 
         switch (type){
             case HOTEL:

@@ -90,7 +90,7 @@ class GalleryAdapter extends ArrayAdapter<GalleryModel> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.gallery_row, parent, false);
         }
 
-        TextView city = (TextView) convertView.findViewById(R.id.gallery_row_city);
+        TextView city = (TextView) convertView.findViewById(R.id.gallery_row_address);
         TextView subtype = (TextView) convertView.findViewById(R.id.gallery_row_subtype);
         TextView name = (TextView) convertView.findViewById(R.id.gallery_row_name);
         TextView stars = (TextView) convertView.findViewById(R.id.gallery_row_star);

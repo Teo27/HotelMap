@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e3e3e3"
+    android:gravity="center_horizontal"
+    android:padding="15dp">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp">
+
+        <TableRow android:weightSum="2">
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:text="@string/res_arrive"
+                android:textColor="#000"
+                android:textSize="20sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:text="@string/res_leave"
+                android:textColor="#000"
+                android:textSize="20sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+        </TableRow>
+
+        <TableRow android:weightSum="2">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:weightSum="5"
+                android:layout_width="0dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp">
+
+                <TextView
+                    android:id="@+id/map_res_date_arrive"
+                    android:background="#fff"
+                    android:layout_weight="4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000"
+                    android:textSize="20sp"
+                    android:maxLines="1"
+                    android:ellipsize="end"/>
+
+                <ImageButton
+                    android:id="@+id/map_res_date_arrive_btn"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_around"
+                    android:background="#00000000"
+                    android:contentDescription="@string/desc_date"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:weightSum="5"
+                android:layout_width="0dp">
+
+                <TextView
+                    android:id="@+id/map_res_date_leave"
+                    android:background="#fff"
+                    android:layout_weight="4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000"
+                    android:textSize="20sp"
+                    android:maxLines="1"
+                    android:ellipsize="end"/>
+
+                <ImageButton
+                    android:id="@+id/map_res_date_leave_btn"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_around"
+                    android:background="#00000000"
+                    android:contentDescription="@string/desc_date"/>
+
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_marginTop="10dp"
+            android:weightSum="3">
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:text="@string/res_adults"
+                android:textColor="#000"
+                android:textSize="20sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:text="@string/res_children"
+                android:textColor="#000"
+                android:textSize="20sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:text="@string/res_age"
+                android:textColor="#000"
+                android:textSize="20sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+        </TableRow>
+
+        <TableRow
+            android:weightSum="3">
+
+            <Spinner
+                android:id="@+id/map_res_adults"
+                android:layout_weight="1"
+                android:layout_width="0dp"/>
+
+            <Spinner
+                android:id="@+id/map_res_children"
+                android:layout_weight="1"
+                android:layout_width="0dp" />
+
+            <EditText
+                android:id="@+id/map_res_age"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:inputType="text"
+                android:background="#fff"
+                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:textSize="20sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+        </TableRow>
+    </TableLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/res_names"
+        android:textColor="#000"
+        android:textSize="20sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:layout_gravity="start"/>
+
+    <EditText
+        android:id="@+id/map_res_names"
+        android:layout_width="match_parent"
+        android:inputType="text"
+        android:background="#fff"
+        android:layout_height="wrap_content"
+        android:textColor="#000"
+        android:textSize="20sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/res_email"
+        android:textColor="#000"
+        android:textSize="20sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:layout_gravity="start"/>
+
+    <EditText
+        android:id="@+id/map_res_email"
+        android:layout_width="match_parent"
+        android:inputType="textEmailAddress"
+        android:background="#fff"
+        android:layout_height="wrap_content"
+        android:textColor="#000"
+        android:textSize="20sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/res_phone"
+        android:textColor="#000"
+        android:textSize="20sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:layout_gravity="start"/>
+
+    <EditText
+        android:id="@+id/map_res_phone"
+        android:layout_width="match_parent"
+        android:inputType="phone"
+        android:background="#fff"
+        android:layout_height="wrap_content"
+        android:textColor="#000"
+        android:textSize="20sp"
+        android:maxLines="1"
+        android:ellipsize="end"/>
+
+
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/map_res_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="@string/terms_and_conditions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:textColor="#000"
+            android:textSize="20sp"/>
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <Button
+        android:textAllCaps="false"
+        android:id="@+id/map_res_reserve"
+        android:text="@string/gal_reserve"
+        android:background="#E2321D"
+        android:textColor="#FFFFFF"
+        android:textSize="17sp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="5dp" />
+
+
+
+</LinearLayout>
