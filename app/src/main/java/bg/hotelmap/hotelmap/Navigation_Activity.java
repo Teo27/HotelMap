@@ -10,9 +10,9 @@ import android.graphics.Canvas;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -59,19 +59,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import bg.hotelmap.hotelmap.fragments.DatePick;
 import bg.hotelmap.hotelmap.fragments.Gallery;
 import bg.hotelmap.hotelmap.fragments.Offer;
 import bg.hotelmap.hotelmap.models.MapModel;
 
-import static java.security.AccessController.getContext;
 
 public class Navigation_Activity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, AdapterView.OnItemSelectedListener, GoogleMap.OnMarkerClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, AdapterView.OnItemSelectedListener, GoogleMap.OnMarkerClickListener, DatePickerDialog.OnDateSetListener {
 
-    private static final int DATE_PICKER_FROM = 0;
-    private static final int DATE_PICKER_TO = 1;
-    private Date arrival_date;
-    private Date leave_date;
+
     private SupportMapFragment supportMapFragment;
     private int item_selected = 4;
     private GoogleMap map;
@@ -82,9 +79,9 @@ public class Navigation_Activity extends AppCompatActivity
     private Marker mCurrLocationMarker;
     private AlertDialog alertDialog = null;
     private ClusterManager<MapModel> mClusterManager;
+    private TextView arrival;
+    private TextView departure;
 
-    int from_year, from_month, from_day,to_year, to_month, to_day;
-    DatePickerDialog.OnDateSetListener from_dateListener,to_dateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -483,15 +480,15 @@ public class Navigation_Activity extends AppCompatActivity
         builder.setView(dialog_layout);
         alertDialog = builder.create();
 
-        final TextView arrival = (TextView) dialog_layout.findViewById(R.id.map_res_date_arrive);
-        final TextView leave = (TextView) dialog_layout.findViewById(R.id.map_res_date_leave);
+        arrival = (TextView) dialog_layout.findViewById(R.id.map_res_date_arrive);
+        departure = (TextView) dialog_layout.findViewById(R.id.map_res_date_depart);
 
         ImageView arrive_btn = (ImageView) dialog_layout.findViewById(R.id.map_res_date_arrive_btn);
-        ImageView leave_btn = (ImageView) dialog_layout.findViewById(R.id.map_res_date_leave_btn);
+        ImageView depart_btn = (ImageView) dialog_layout.findViewById(R.id.map_res_date_depart_btn);
 
 
-        Spinner adults = (Spinner) dialog_layout.findViewById(R.id.map_res_adults);
-        Spinner children = (Spinner) dialog_layout.findViewById(R.id.map_res_children);
+        final Spinner adults = (Spinner) dialog_layout.findViewById(R.id.map_res_adults);
+        final Spinner children = (Spinner) dialog_layout.findViewById(R.id.map_res_children);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.people_count, android.R.layout.simple_spinner_item);
@@ -500,9 +497,6 @@ public class Navigation_Activity extends AppCompatActivity
         adults.setAdapter(adapter);
         adults.setSelection(1);
         children.setAdapter(adapter);
-
-        final int adults_number = Integer.parseInt(adults.getSelectedItem().toString());
-        final int childrens_number = Integer.parseInt(children.getSelectedItem().toString());
 
         final EditText age = (EditText) dialog_layout.findViewById(R.id.map_res_age);
 
@@ -513,105 +507,94 @@ public class Navigation_Activity extends AppCompatActivity
         final CheckBox checkBox = (CheckBox) dialog_layout.findViewById(R.id.map_res_check);
         Button reserve_btn = (Button) dialog_layout.findViewById(R.id.map_res_reserve);
 
-        from_dateListener = new DatePickerDialog.OnDateSetListener(){
-
-            public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
-
-                Calendar cal = Calendar.getInstance();
-                cal.set(Calendar.YEAR, arg1);
-                cal.set(Calendar.MONTH, arg2);
-                cal.set(Calendar.DAY_OF_MONTH, arg3);
-                Date dateRepresentation = cal.getTime();
-
-                SimpleDateFormat simpleDate =  new SimpleDateFormat("dd/MM/yyyy");
-                arrival.setText(simpleDate.format(dateRepresentation));
-                arrival_date = dateRepresentation;
-            }
-        };
-
-        to_dateListener = new DatePickerDialog.OnDateSetListener(){
-            public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
-
-                Calendar cal = Calendar.getInstance();
-                cal.set(Calendar.YEAR, arg1);
-                cal.set(Calendar.MONTH, arg2);
-                cal.set(Calendar.DAY_OF_MONTH, arg3);
-                Date dateRepresentation = cal.getTime();
-
-                SimpleDateFormat simpleDate =  new SimpleDateFormat("dd/MM/yyyy");
-                leave.setText(simpleDate.format(dateRepresentation));
-                leave_date = dateRepresentation;
-            }
-        };
-
-
         arrive_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialog(DATE_PICKER_FROM);
+                DialogFragment newFragment = new DatePick();
+
+                Bundle args = new Bundle();
+                args.putBoolean("state", true);
+                if(departure != null){
+                    args.putString("max_date",departure.getText().toString());
+                }
+                newFragment.setArguments(args);
+
+                newFragment.show(getSupportFragmentManager(), "dateArrive");
             }
         });
-        leave_btn.setOnClickListener(new View.OnClickListener() {
+
+        depart_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(arrival.getText().length() > 0)
-                    showDialog(DATE_PICKER_TO);
-                else
+                if(arrival.getText().length() > 0) {
+                    DialogFragment newFragment = new DatePick();
+
+                    Bundle args = new Bundle();
+                    args.putBoolean("state", false);
+                    args.putString("min_date", arrival.getText().toString());
+                    newFragment.setArguments(args);
+
+                    newFragment.show(getSupportFragmentManager(), "dateDepart");
+                }else
                     Toast.makeText(Navigation_Activity.this, "Please select a date of arrival first", Toast.LENGTH_SHORT).show();
             }
         });
+
         reserve_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean ageCheck = true;
+                final int adults_number = Integer.parseInt(adults.getSelectedItem().toString());
+                final int childrens_number = Integer.parseInt(children.getSelectedItem().toString());
 
-                if(childrens_number != 0 && age.getText().length() > 0)
+                if(childrens_number != 0 && age.getText().length() <= 0)
                     ageCheck = false;
 
-                if(arrival.getText().length() > 0 && leave.getText().length() > 0 && names.getText().length() > 0 && isValidEmail(email.getText()) && phone.getText().length() > 0 && ageCheck){
-                    if(checkBox.isChecked()){
-                        alertDialog.dismiss();
-                        Toast.makeText(Navigation_Activity.this, "Reserve with Adults: " + adults_number + " and children " + childrens_number, Toast.LENGTH_SHORT).show();
-                    }else{
-                        Toast.makeText(Navigation_Activity.this, "You have to agree to the terms and conditions", Toast.LENGTH_SHORT).show();
-                    }
-                }else{
+                if(arrival.getText().length() > 0 && departure.getText().length() > 0 && names.getText().length() > 0 && isValidEmail(email.getText()) && phone.getText().length() > 0){
+
+                    if(ageCheck){
+
+                        if(checkBox.isChecked()){
+                            alertDialog.dismiss();
+                            Toast.makeText(Navigation_Activity.this, "Reserve with Adults: " + adults_number + " and children " + childrens_number, Toast.LENGTH_SHORT).show();
+                        }else
+                            Toast.makeText(Navigation_Activity.this, "You have to agree to the terms and conditions", Toast.LENGTH_SHORT).show();
+
+                    }else
+                        Toast.makeText(Navigation_Activity.this, "Please write your childrens ages", Toast.LENGTH_SHORT).show();
+
+                }else
                     Toast.makeText(Navigation_Activity.this, "Please check that all fields are correct", Toast.LENGTH_SHORT).show();
-                }
+
 
             }
         });
+
         return alertDialog;
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, monthOfYear);
+        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        Date dateRepresentation = cal.getTime();
+
+        SimpleDateFormat simpleDate =  new SimpleDateFormat("dd/MM/yyyy");
+        Fragment dateArrive = getSupportFragmentManager().findFragmentByTag("dateArrive");
+        Fragment dateDepart = getSupportFragmentManager().findFragmentByTag("dateDepart");
+
+        if(dateArrive != null)
+            arrival.setText(simpleDate.format(dateRepresentation));
+        else if(dateDepart != null)
+            departure.setText(simpleDate.format(dateRepresentation));
+        else
+            Toast.makeText(this, "There was an error in the application, please report this", Toast.LENGTH_SHORT).show();
     }
 
     public static boolean isValidEmail(CharSequence target) {
         return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
-    }
-
-    @Override
-    protected Dialog onCreateDialog(int id) {
-
-        switch(id){
-            case DATE_PICKER_FROM:
-                DatePickerDialog da = new DatePickerDialog(this, from_dateListener, from_year, from_month, from_day);
-
-                Calendar c = Calendar.getInstance();
-                c.add(Calendar.DATE, 1);
-                Date newDate = c.getTime();
-                da.getDatePicker().setMinDate(newDate.getTime());
-                if(leave_date != null){
-                    da.getDatePicker().setMaxDate(leave_date.getTime());
-                }
-
-
-                return da;
-            case DATE_PICKER_TO:
-                DatePickerDialog dp = new DatePickerDialog(this, to_dateListener, to_year, to_month, to_day);
-                dp.getDatePicker().setMinDate(arrival_date.getTime());
-
-                return dp;
-        }
-        return null;
     }
 
     private void aroundMe() {

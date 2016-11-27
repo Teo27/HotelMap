@@ -26,7 +26,7 @@
             <TextView
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:text="@string/res_leave"
+                android:text="@string/res_depart"
                 android:textColor="#000"
                 android:textSize="20sp"
                 android:maxLines="1"
@@ -73,7 +73,7 @@
                 android:layout_width="0dp">
 
                 <TextView
-                    android:id="@+id/map_res_date_leave"
+                    android:id="@+id/map_res_date_depart"
                     android:background="#fff"
                     android:layout_weight="4"
                     android:layout_width="0dp"
@@ -84,7 +84,7 @@
                     android:ellipsize="end"/>
 
                 <ImageButton
-                    android:id="@+id/map_res_date_leave_btn"
+                    android:id="@+id/map_res_date_depart_btn"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

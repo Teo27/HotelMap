@@ -63,8 +63,8 @@
     <string name="res_phone">Your phone</string>
     <string name="res_email">Your email</string>
     <string name="res_names">Your names</string>
-    <string name="res_arrive">Date of arrival</string>
-    <string name="res_leave">Date of leave</string>
+    <string name="res_arrive">Arrival</string>
+    <string name="res_depart">Departure</string>
     <string name="res_adults">Adults</string>
     <string name="res_children">Children</string>
     <string name="res_age">Age</string>
