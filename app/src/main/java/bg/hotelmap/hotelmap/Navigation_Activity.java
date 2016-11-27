@@ -5,10 +5,13 @@ import android.app.Dialog;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -37,9 +40,19 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Result;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -58,6 +71,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import bg.hotelmap.hotelmap.fragments.DatePick;
 import bg.hotelmap.hotelmap.fragments.Gallery;
@@ -66,22 +80,20 @@ import bg.hotelmap.hotelmap.models.MapModel;
 
 
 public class Navigation_Activity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, AdapterView.OnItemSelectedListener, GoogleMap.OnMarkerClickListener, DatePickerDialog.OnDateSetListener {
-
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, AdapterView.OnItemSelectedListener, GoogleMap.OnMarkerClickListener, DatePickerDialog.OnDateSetListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private SupportMapFragment supportMapFragment;
     private int item_selected = 4;
     private GoogleMap map;
     private double progress_value;
     private LocationRequest mLocationRequest;
-    private GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient googleApiClient;
     private Location mLastLocation;
-    private Marker mCurrLocationMarker;
+    private Marker mCurrLocationMarker, hotelMarker, sightMarker, shopMarker, eventMarker;
     private AlertDialog alertDialog = null;
     private ClusterManager<MapModel> mClusterManager;
-    private TextView arrival;
-    private TextView departure;
-
+    private TextView arrival, departure;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +134,7 @@ public class Navigation_Activity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.getMenu().getItem(item_selected).setChecked(true);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -191,19 +203,24 @@ public class Navigation_Activity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_hotel) {
-            Toast.makeText(this, "Покажи хотели", Toast.LENGTH_SHORT).show();
+            hideAllMarkers();
+            hotelMarker.setVisible(true);
         } else if (id == R.id.nav_sights) {
-            Toast.makeText(this, "Покажи забележителности", Toast.LENGTH_SHORT).show();
+            hideAllMarkers();
+            sightMarker.setVisible(true);
         } else if (id == R.id.nav_shops) {
-            Toast.makeText(this, "Покажи магазини", Toast.LENGTH_SHORT).show();
+            hideAllMarkers();
+            shopMarker.setVisible(true);
         } else if (id == R.id.nav_events) {
-            Toast.makeText(this, "Покажи събития", Toast.LENGTH_SHORT).show();
+            hideAllMarkers();
+            eventMarker.setVisible(true);
         } else if (id == R.id.nav_all) {
-            Toast.makeText(this, "Покажи всички", Toast.LENGTH_SHORT).show();
+            showAllMarkers();
         } else if (id == R.id.nav_discount) {
             Toast.makeText(this, "Резервирай с отстъпка", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_around) {
-            aroundDialogInit().show();
+            //aroundDialogInit().show();
+            checkGPS();
         } else if (id == R.id.nav_scan) {
             Intent intent = new Intent(this, Code_Scanner.class);
             startActivityForResult(intent, 0);
@@ -257,6 +274,70 @@ public class Navigation_Activity extends AppCompatActivity
                 }
             }
         }
+
+        if(requestCode == 1000){
+            if (resultCode == -1){
+                aroundDialogInit().show();
+            }else{
+                Toast.makeText(this, "User denied permission", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void checkGPS(){
+
+        if (googleApiClient == null) {
+            googleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(LocationServices.API)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this).build();
+            googleApiClient.connect();
+        }
+            LocationRequest locationRequest = LocationRequest.create();
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setInterval(30 * 1000);
+            locationRequest.setFastestInterval(5 * 1000);
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                    .addLocationRequest(locationRequest);
+
+            //**************************
+            builder.setAlwaysShow(true); //this is the key ingredient
+            //**************************
+
+            PendingResult<LocationSettingsResult> result =
+                    LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
+            result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+                @Override
+                public void onResult(LocationSettingsResult result) {
+
+                    final Status status = result.getStatus();
+                    final LocationSettingsStates state = result.getLocationSettingsStates();
+
+                    switch (status.getStatusCode()) {
+
+                        case LocationSettingsStatusCodes.SUCCESS:
+                            aroundDialogInit().show();
+                            break;
+
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                            // Location settings are not satisfied. But could be fixed by showing the user
+                            // a dialog.
+                            try {
+                                // Show the dialog by calling startResolutionForResult(),
+                                // and check the result in onActivityResult().
+                                status.startResolutionForResult(
+                                        Navigation_Activity.this, 1000);
+                            } catch (IntentSender.SendIntentException e) {
+                                // Ignore the error.
+                            }
+                            break;
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                            Toast.makeText(Navigation_Activity.this, "Unable to change turn GPS on, please do so manually", Toast.LENGTH_LONG).show();
+                            break;
+                    }
+                }
+            });
+
     }
 
     private Dialog aroundDialogInit() {
@@ -286,12 +367,14 @@ public class Navigation_Activity extends AppCompatActivity
     }
 
     private void seekInit(View dialog_layout) {
+
         SeekBar seekBar = (SeekBar) dialog_layout.findViewById(R.id.around_me_seek);
         final TextView seekText = (TextView) dialog_layout.findViewById(R.id.around_me_text);
         final String text = "Search up to %s km";
         seekBar.setProgress(30);
+        progress_value = 3.0;
         seekBar.setMax(45);
-        seekText.setText(String.format(text, seekBar.getProgress()));
+        seekText.setText(String.format(text, seekBar.getProgress()/10.0));
 
         seekBar.setOnSeekBarChangeListener(
                 new SeekBar.OnSeekBarChangeListener() {
@@ -313,6 +396,10 @@ public class Navigation_Activity extends AppCompatActivity
                     }
                 }
         );
+
+    }
+
+    private void aroundMe() {
 
     }
 
@@ -411,34 +498,31 @@ public class Navigation_Activity extends AppCompatActivity
      //   map.setOnMarkerClickListener(mClusterManager);
 
 
-        MapModel obj1 = new MapModel("Varna","Spahotel","Hotel Cherno more","http://hotelmap.bg", 3, "00359123456", 43.2193138, 27.8997223, 39, MapModel.Type.HOTEL);
-        MapModel obj2 = new MapModel("Varna","Kids Park","Detskikat","http://hotelmap.bg", 5, "00359123456", 43.2140504, 27.9147333, 400, MapModel.Type.EVENT);
-        MapModel obj3 = new MapModel("Varna","Spahotel","Hotel Cherno more","http://hotelmap.bg", 3, "00359123456", 42.698334, 23.319941, 39, MapModel.Type.HOTEL);
-        MapModel obj4 = new MapModel("Varna","Kids Park","Detskikat","http://hotelmap.bg", 5, "00359123456", 41.524605, 23.391510, 400, MapModel.Type.EVENT);
-
-        ArrayList<MapModel> objects = new ArrayList();
-
-        objects.add(obj1);
-        objects.add(obj2);
-        objects.add(obj3);
-        objects.add(obj4);
+        ArrayList<MapModel> objects = loadMarkerArray();
 
         for(MapModel model : objects){
-            map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model)))).setTag(model);
-          //  mClusterManager.addItem(model);
+            switch (model.getType()){
+                case HOTEL:
+                    hotelMarker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
+                    hotelMarker.setTag(model);
+                    break;
+                case SHOP:
+                    shopMarker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
+                    shopMarker.setTag(model);
+                    break;
+                case SIGHT:
+                    sightMarker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
+                    sightMarker.setTag(model);
+                    break;
+                case EVENT:
+                    eventMarker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
+                    eventMarker.setTag(model);
+                    break;
+            }
+            //  mClusterManager.addItem(model);
         }
-/*
-        LatLng obj1position = new LatLng(obj1.getLat(),obj1.getLng());
-        LatLng obj2position = new LatLng(obj2.getLat(),obj2.getLng());
-        LatLng obj3position = new LatLng(obj3.getLat(),obj3.getLng());
-        LatLng obj4position = new LatLng(obj4.getLat(),obj4.getLng());
 
-        map.addMarker(new MarkerOptions().position(obj1position).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(obj1)))).setTag(obj1);
-        map.addMarker(new MarkerOptions().position(obj2position).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(obj2)))).setTag(obj2);
-        map.addMarker(new MarkerOptions().position(obj3position).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(obj3)))).setTag(obj3);
-        map.addMarker(new MarkerOptions().position(obj4position).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(obj4)))).setTag(obj4);
-
-*/
+        onNavigationItemSelected(navigationView.getMenu().getItem(item_selected));
 
         LatLngBounds.Builder b = new LatLngBounds.Builder();
         b.include(new LatLng(44.214555,22.67459));
@@ -449,20 +533,39 @@ public class Navigation_Activity extends AppCompatActivity
 
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 20);
         googleMap.moveCamera(cu);
+    }
 
-        //Initialize Google Play Services
-     /*   if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                buildGoogleApiClient();
-                map.setMyLocationEnabled(true);
-            }
-        }
-        else {
-            buildGoogleApiClient();
-            map.setMyLocationEnabled(true);
-        }*/
+    private ArrayList<MapModel> loadMarkerArray(){
+
+        MapModel obj1 = new MapModel("Varna","Spahotel","Hotel Cherno more","http://hotelmap.bg", 3, "00359123456", 43.2193138, 27.8997223, 39, MapModel.Type.HOTEL);
+        MapModel obj2 = new MapModel("Varna","Kids Park","Detskikat","http://hotelmap.bg", 5, "00359123456", 43.2140504, 27.9147333, 400, MapModel.Type.EVENT);
+        MapModel obj3 = new MapModel("Varna","Spahotel","Hotel Cherno more","http://hotelmap.bg", 3, "00359123456", 42.698334, 23.319941, 39, MapModel.Type.SIGHT);
+        MapModel obj4 = new MapModel("Varna","Kids Park","Detskikat","http://hotelmap.bg", 5, "00359123456", 41.524605, 23.391510, 400, MapModel.Type.SHOP);
+
+        ArrayList<MapModel> objects = new ArrayList();
+
+        objects.add(obj1);
+        objects.add(obj2);
+        objects.add(obj3);
+        objects.add(obj4);
+
+        return objects;
+    }
+
+    private void hideAllMarkers(){
+
+        hotelMarker.setVisible(false);
+        shopMarker.setVisible(false);
+        eventMarker.setVisible(false);
+        sightMarker.setVisible(false);
+    }
+
+    private void showAllMarkers(){
+
+        hotelMarker.setVisible(true);
+        shopMarker.setVisible(true);
+        eventMarker.setVisible(true);
+        sightMarker.setVisible(true);
     }
 
     public boolean onMarkerClick(final Marker marker) {
@@ -597,11 +700,8 @@ public class Navigation_Activity extends AppCompatActivity
         return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
-    private void aroundMe() {
-
-    }
-
     private Bitmap infoWindowInit(MapModel model){
+
         View v = getLayoutInflater().inflate(R.layout.map_info_window, null);
 
         TextView price = (TextView) v.findViewById(R.id.map_info_price);
@@ -644,6 +744,20 @@ public class Navigation_Activity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
 }
 
 
