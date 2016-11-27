@@ -44,7 +44,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
@@ -71,12 +70,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import bg.hotelmap.hotelmap.fragments.DatePick;
 import bg.hotelmap.hotelmap.fragments.Gallery;
 import bg.hotelmap.hotelmap.fragments.Offer;
-import bg.hotelmap.hotelmap.models.MapModel;
+import bg.hotelmap.hotelmap.models.ObjectOfInterest;
 
 
 public class Navigation_Activity extends AppCompatActivity
@@ -91,7 +89,7 @@ public class Navigation_Activity extends AppCompatActivity
     private Location mLastLocation;
     private Marker mCurrLocationMarker, hotelMarker, sightMarker, shopMarker, eventMarker;
     private AlertDialog alertDialog = null;
-    private ClusterManager<MapModel> mClusterManager;
+    private ClusterManager<ObjectOfInterest> mClusterManager;
     private TextView arrival, departure;
     private NavigationView navigationView;
 
@@ -219,7 +217,6 @@ public class Navigation_Activity extends AppCompatActivity
         } else if (id == R.id.nav_discount) {
             Toast.makeText(this, "Резервирай с отстъпка", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_around) {
-            //aroundDialogInit().show();
             checkGPS();
         } else if (id == R.id.nav_scan) {
             Intent intent = new Intent(this, Code_Scanner.class);
@@ -403,7 +400,131 @@ public class Navigation_Activity extends AppCompatActivity
 
     }
 
-    private Dialog mapDialogInit(MapModel tag){
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        googleMap.setOnMarkerClickListener(this);
+        UiSettings settings = map.getUiSettings();
+        settings.setMapToolbarEnabled(false);
+        map.getUiSettings().setRotateGesturesEnabled(false);
+
+
+
+        // Initialize the manager with the context and the map.
+        // (Activity extends context, so we can pass 'this' in the constructor.)
+        mClusterManager = new ClusterManager<ObjectOfInterest>(this,map);
+
+        // Point the map's listeners at the listeners implemented by the cluster
+        // manager.
+        map.setOnCameraIdleListener(mClusterManager);
+     //   map.setOnMarkerClickListener(mClusterManager);
+
+        ObjectLoad ol = new ObjectLoad();
+        ol.setup();
+        ArrayList<ObjectOfInterest> objects = ol.getObjects();
+
+        for(ObjectOfInterest model : objects){
+            switch (model.getType()){
+                case HOTEL:
+                    hotelMarker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
+                    hotelMarker.setTag(model);
+                    break;
+                case SHOP:
+                    shopMarker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
+                    shopMarker.setTag(model);
+                    break;
+                case SIGHT:
+                    sightMarker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
+                    sightMarker.setTag(model);
+                    break;
+                case EVENT:
+                    eventMarker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
+                    eventMarker.setTag(model);
+                    break;
+            }
+            //  mClusterManager.addItem(model);
+        }
+
+        onNavigationItemSelected(navigationView.getMenu().getItem(item_selected));
+
+        LatLngBounds.Builder b = new LatLngBounds.Builder();
+        b.include(new LatLng(44.214555,22.67459));
+        b.include(new LatLng(41.236022,25.288167));
+        b.include(new LatLng(42.312700,22.360067));
+        b.include(new LatLng(43.539550,28.607050));
+        LatLngBounds bounds = b.build();
+
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 20);
+        googleMap.moveCamera(cu);
+    }
+
+    private Bitmap infoWindowInit(ObjectOfInterest model){
+
+        View v = getLayoutInflater().inflate(R.layout.map_info_window, null);
+
+        TextView price = (TextView) v.findViewById(R.id.map_info_price);
+        LinearLayout picLL = (LinearLayout) v.findViewById(R.id.map_info_star);
+        int stars = model.getStar();
+        final float scale = getApplicationContext().getResources().getDisplayMetrics().density;
+        int pixels = (int) (12 * scale + 0.5f);
+        if(stars>1){
+            for(int i=0;i<stars-1;i++){
+                ImageView myImage = new ImageView(this);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(pixels,pixels);
+                myImage.setImageResource(R.drawable.ic_golden_star);
+                myImage.setLayoutParams(params);
+                picLL.addView(myImage);
+            }
+        }
+
+        int temp_price  = (int) model.getPrice();
+        price.setText(String.valueOf(temp_price));
+
+
+        if (v.getMeasuredHeight() <= 0) {
+            v.measure(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            Bitmap b = Bitmap.createBitmap(v.getMeasuredWidth(), v.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+            Canvas c = new Canvas(b);
+            v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
+            v.draw(c);
+            return b;
+
+        }else{
+
+            Bitmap b = Bitmap.createBitmap(v.getMeasuredWidth(), v.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+            Canvas c = new Canvas(b);
+            v.layout(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+            v.draw(c);
+
+            return b;
+        }
+
+
+    }
+
+    private void hideAllMarkers(){
+
+        hotelMarker.setVisible(false);
+        shopMarker.setVisible(false);
+        eventMarker.setVisible(false);
+        sightMarker.setVisible(false);
+    }
+
+    private void showAllMarkers(){
+
+        hotelMarker.setVisible(true);
+        shopMarker.setVisible(true);
+        eventMarker.setVisible(true);
+        sightMarker.setVisible(true);
+    }
+
+    public boolean onMarkerClick(final Marker marker) {
+        ObjectOfInterest obj = (ObjectOfInterest) marker.getTag();
+        mapDialogInit(obj).show();
+        return false;
+    }
+
+    private Dialog mapDialogInit(ObjectOfInterest tag){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(Navigation_Activity.this);
         LayoutInflater inflater = Navigation_Activity.this.getLayoutInflater();
@@ -433,7 +554,7 @@ public class Navigation_Activity extends AppCompatActivity
         subtype.setText(tag.getSubtype());
         name.setText(tag.getName());
         price.setText(String.valueOf(tag.getPrice()));
-        phone.setText(tag.getPhone());
+        phone.setText(String.valueOf(tag.getPhone()));
 
         type.setImageResource(tag.getAssociatedDrawable());
 
@@ -476,102 +597,6 @@ public class Navigation_Activity extends AppCompatActivity
 
         alertDialog = builder.create();
         return alertDialog;
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        map = googleMap;
-        googleMap.setOnMarkerClickListener(this);
-        UiSettings settings = map.getUiSettings();
-        settings.setMapToolbarEnabled(false);
-        map.getUiSettings().setRotateGesturesEnabled(false);
-
-
-
-        // Initialize the manager with the context and the map.
-        // (Activity extends context, so we can pass 'this' in the constructor.)
-        mClusterManager = new ClusterManager<MapModel>(this,map);
-
-        // Point the map's listeners at the listeners implemented by the cluster
-        // manager.
-        map.setOnCameraIdleListener(mClusterManager);
-     //   map.setOnMarkerClickListener(mClusterManager);
-
-
-        ArrayList<MapModel> objects = loadMarkerArray();
-
-        for(MapModel model : objects){
-            switch (model.getType()){
-                case HOTEL:
-                    hotelMarker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
-                    hotelMarker.setTag(model);
-                    break;
-                case SHOP:
-                    shopMarker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
-                    shopMarker.setTag(model);
-                    break;
-                case SIGHT:
-                    sightMarker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
-                    sightMarker.setTag(model);
-                    break;
-                case EVENT:
-                    eventMarker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
-                    eventMarker.setTag(model);
-                    break;
-            }
-            //  mClusterManager.addItem(model);
-        }
-
-        onNavigationItemSelected(navigationView.getMenu().getItem(item_selected));
-
-        LatLngBounds.Builder b = new LatLngBounds.Builder();
-        b.include(new LatLng(44.214555,22.67459));
-        b.include(new LatLng(41.236022,25.288167));
-        b.include(new LatLng(42.312700,22.360067));
-        b.include(new LatLng(43.539550,28.607050));
-        LatLngBounds bounds = b.build();
-
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 20);
-        googleMap.moveCamera(cu);
-    }
-
-    private ArrayList<MapModel> loadMarkerArray(){
-
-        MapModel obj1 = new MapModel("Varna","Spahotel","Hotel Cherno more","http://hotelmap.bg", 3, "00359123456", 43.2193138, 27.8997223, 39, MapModel.Type.HOTEL);
-        MapModel obj2 = new MapModel("Varna","Kids Park","Detskikat","http://hotelmap.bg", 5, "00359123456", 43.2140504, 27.9147333, 400, MapModel.Type.EVENT);
-        MapModel obj3 = new MapModel("Varna","Spahotel","Hotel Cherno more","http://hotelmap.bg", 3, "00359123456", 42.698334, 23.319941, 39, MapModel.Type.SIGHT);
-        MapModel obj4 = new MapModel("Varna","Kids Park","Detskikat","http://hotelmap.bg", 5, "00359123456", 41.524605, 23.391510, 400, MapModel.Type.SHOP);
-
-        ArrayList<MapModel> objects = new ArrayList();
-
-        objects.add(obj1);
-        objects.add(obj2);
-        objects.add(obj3);
-        objects.add(obj4);
-
-        return objects;
-    }
-
-    private void hideAllMarkers(){
-
-        hotelMarker.setVisible(false);
-        shopMarker.setVisible(false);
-        eventMarker.setVisible(false);
-        sightMarker.setVisible(false);
-    }
-
-    private void showAllMarkers(){
-
-        hotelMarker.setVisible(true);
-        shopMarker.setVisible(true);
-        eventMarker.setVisible(true);
-        sightMarker.setVisible(true);
-    }
-
-    public boolean onMarkerClick(final Marker marker) {
-        MapModel obj = (MapModel) marker.getTag();
-        mapDialogInit(obj).show();
-        return false;
     }
 
     private Dialog mapReserveDialogInit(){
@@ -700,50 +725,6 @@ public class Navigation_Activity extends AppCompatActivity
         return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
-    private Bitmap infoWindowInit(MapModel model){
-
-        View v = getLayoutInflater().inflate(R.layout.map_info_window, null);
-
-        TextView price = (TextView) v.findViewById(R.id.map_info_price);
-        LinearLayout picLL = (LinearLayout) v.findViewById(R.id.map_info_star);
-        int stars = model.getStar();
-        final float scale = getApplicationContext().getResources().getDisplayMetrics().density;
-        int pixels = (int) (12 * scale + 0.5f);
-        if(stars>1){
-            for(int i=0;i<stars-1;i++){
-                ImageView myImage = new ImageView(this);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(pixels,pixels);
-                myImage.setImageResource(R.drawable.ic_golden_star);
-                myImage.setLayoutParams(params);
-                picLL.addView(myImage);
-            }
-        }
-
-        int temp_price  = (int) model.getPrice();
-        price.setText(String.valueOf(temp_price));
-
-
-        if (v.getMeasuredHeight() <= 0) {
-            v.measure(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            Bitmap b = Bitmap.createBitmap(v.getMeasuredWidth(), v.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-            Canvas c = new Canvas(b);
-            v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
-            v.draw(c);
-            return b;
-
-        }else{
-
-            Bitmap b = Bitmap.createBitmap(v.getMeasuredWidth(), v.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-            Canvas c = new Canvas(b);
-            v.layout(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
-            v.draw(c);
-
-            return b;
-        }
-
-
-    }
-
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
@@ -759,132 +740,4 @@ public class Navigation_Activity extends AppCompatActivity
 
     }
 }
-
-
-/*
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-    }
-
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        mLastLocation = location;
-        if (mCurrLocationMarker != null) {
-            mCurrLocationMarker.remove();
-        }
-
-        //Place current location marker
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-        mCurrLocationMarker = map.addMarker(markerOptions);
-
-        //move map camera
-        map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        map.animateCamera(CameraUpdateFactory.zoomTo(11));
-
-        //stop location updates
-        if (mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        }
-    }
-
-    public boolean checkLocationPermission(){
-        if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                //TODO:
-                // Show an expanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-                //Prompt the user once explanation has been shown
-                //(just doing it here for now, note that with this code, no explanation is shown)
-                ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-
-
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-            }
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
-                    if (ContextCompat.checkSelfPermission(this,
-                            android.Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-
-                        if (mGoogleApiClient == null) {
-                            buildGoogleApiClient();
-                        }
-                        map.setMyLocationEnabled(true);
-                    }
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
-    }*/
 

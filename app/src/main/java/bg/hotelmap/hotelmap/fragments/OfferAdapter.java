@@ -1,6 +1,6 @@
 package bg.hotelmap.hotelmap.fragments;
 
-import android.animation.LayoutTransition;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Handler;
@@ -8,11 +8,8 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,28 +19,27 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import bg.hotelmap.hotelmap.R;
-import bg.hotelmap.hotelmap.models.OfferModel;
+import bg.hotelmap.hotelmap.models.ObjectOfInterest;
 
 /**
  * Created by Teo on 25-Oct-16.
  */
 
-public class OfferAdapter extends ArrayAdapter<OfferModel> {
+class OfferAdapter extends ArrayAdapter<ObjectOfInterest> {
 
     private int pos = -1;
     private Handler handler;
-    private Runnable runnable;
-    private String currency = " Leva";
 
-    public OfferAdapter(Context context, ArrayList<OfferModel> models) {
+    OfferAdapter(Context context, ArrayList<ObjectOfInterest> models) {
         super(context, 0, models);
     }
 
+    @SuppressLint("SetTextI18n")
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
-        OfferModel model = getItem(position);
+        ObjectOfInterest model = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.offer_row, parent, false);
@@ -51,20 +47,11 @@ public class OfferAdapter extends ArrayAdapter<OfferModel> {
         if (pos == position) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.offer_row_clicked, parent, false);
 
-            /*
-            final View finalConvertView = convertView;
-            new Handler().post(new Runnable() {
-                public void run() {
-                    finalConvertView.startAnimation(AnimationUtils.loadAnimation(getContext(), android.R.anim.slide_out_right));
-                }
-            });
-
-            */
-
             TextView desc = (TextView) convertView.findViewById(R.id.offer_row_desc);
             Button link1 = (Button) convertView.findViewById(R.id.offer_row_link1);
             Button link2 = (Button) convertView.findViewById(R.id.offer_row_link2);
-            final String url = model.getLink1();
+            assert model != null;
+            final String url = model.getUrl();
             desc.setText(String.valueOf(model.getDesc()));
 
             link1.setOnClickListener(new View.OnClickListener(){
@@ -88,12 +75,12 @@ public class OfferAdapter extends ArrayAdapter<OfferModel> {
             TextView discount = (TextView) convertView.findViewById(R.id.offer_row_discount);
             TextView period = (TextView) convertView.findViewById(R.id.offer_row_period);
 
+            assert model != null;
             name.setText(String.valueOf(model.getName()));
             address.setText(String.valueOf(model.getAddress()));
 
             Resources res = convertView.getResources();
 
-          //  int discountInt = Double.valueOf(model.getDiscount()).intValue();
             discount.setText("-" + String.valueOf(model.getDiscount()) + "%");
 
             try {
@@ -111,6 +98,7 @@ public class OfferAdapter extends ArrayAdapter<OfferModel> {
         TextView discountPrice = (TextView) convertView.findViewById(R.id.offer_row_discountPrice);
 
         shortDesc.setText(String.valueOf(model.getShortDesc()));
+        String currency = " Leva";
         price.setText(String.valueOf(model.getPrice()) + currency);
         discountPrice.setText(String.valueOf(model.getDiscountPrice()) + currency);
 
@@ -124,7 +112,7 @@ public class OfferAdapter extends ArrayAdapter<OfferModel> {
     private void countDownStart(final TextView period, String date, final Resources res) throws ParseException {
         final Date dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date);
         handler = new Handler();
-        runnable = new Runnable() {
+        Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 handler.postDelayed(this, 1000);
@@ -141,7 +129,7 @@ public class OfferAdapter extends ArrayAdapter<OfferModel> {
                     diff -= minutes * (60 * 1000);
                     long seconds = diff / 1000;
 
-                    period.setText(res.getString(R.string.off_period,String.valueOf(days),String.valueOf(hours),String.valueOf(minutes),String.valueOf(seconds)));
+                    period.setText(res.getString(R.string.off_period, String.valueOf(days), String.valueOf(hours), String.valueOf(minutes), String.valueOf(seconds)));
 
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -18,29 +18,28 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import bg.hotelmap.hotelmap.R;
-import bg.hotelmap.hotelmap.models.GalleryModel;
+import bg.hotelmap.hotelmap.models.ObjectOfInterest;
 
 /**
  * Created by Teo on 19-Oct-16.
  */
 
-class GalleryAdapter extends ArrayAdapter<GalleryModel> {
+class GalleryAdapter extends ArrayAdapter<ObjectOfInterest> {
 
     private int pos = -1;
 
-    public GalleryAdapter(Context context, ArrayList<GalleryModel> models) {
+    GalleryAdapter(Context context, ArrayList<ObjectOfInterest> models) {
         super(context, 0, models);
     }
 
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
-        final GalleryModel model = getItem(position);
+        final ObjectOfInterest model = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.gallery_row, parent, false);
@@ -99,7 +98,8 @@ class GalleryAdapter extends ArrayAdapter<GalleryModel> {
         ImageView type = (ImageView) convertView.findViewById(R.id.gallery_row_box_type);
 
         Resources res = convertView.getResources();
-        city.setText(model.getCity());
+        assert model != null;
+        city.setText(model.getAddress());
         subtype.setText(model.getSubtype());
         name.setText(model.getName());
         stars.setText(String.valueOf(model.getStar()));
@@ -122,7 +122,7 @@ class GalleryAdapter extends ArrayAdapter<GalleryModel> {
                     }
                     finalView.getContext().startActivity(callIntent);
                 }catch (Exception e){
-
+                    e.printStackTrace();
                 }
 
             }
@@ -131,7 +131,7 @@ class GalleryAdapter extends ArrayAdapter<GalleryModel> {
         return convertView;
     }
 
-    public void selectedItem(int position)
+    void selectedItem(int position)
     {
         this.pos = position; //position must be a global variable
     }
