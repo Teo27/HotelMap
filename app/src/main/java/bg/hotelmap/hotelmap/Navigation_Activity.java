@@ -1,18 +1,24 @@
 package bg.hotelmap.hotelmap;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -64,12 +70,15 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.maps.android.SphericalUtil;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.EmptyStackException;
+import java.util.List;
 
 import bg.hotelmap.hotelmap.fragments.DatePick;
 import bg.hotelmap.hotelmap.fragments.Gallery;
@@ -84,14 +93,14 @@ public class Navigation_Activity extends AppCompatActivity
     private int item_selected = 4;
     private GoogleMap map;
     private double progress_value;
-    private LocationRequest mLocationRequest;
     private GoogleApiClient googleApiClient;
-    private Location mLastLocation;
-    private Marker mCurrLocationMarker, hotelMarker, sightMarker, shopMarker, eventMarker;
     private AlertDialog alertDialog = null;
     private ClusterManager<ObjectOfInterest> mClusterManager;
     private TextView arrival, departure;
     private NavigationView navigationView;
+    private List<Marker> markers = new ArrayList<>();
+    private Boolean error = false;
+    private LatLng myLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -201,17 +210,13 @@ public class Navigation_Activity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_hotel) {
-            hideAllMarkers();
-            hotelMarker.setVisible(true);
+            showMarker(ObjectOfInterest.Type.HOTEL);
         } else if (id == R.id.nav_sights) {
-            hideAllMarkers();
-            sightMarker.setVisible(true);
+            showMarker(ObjectOfInterest.Type.SIGHT);
         } else if (id == R.id.nav_shops) {
-            hideAllMarkers();
-            shopMarker.setVisible(true);
+            showMarker(ObjectOfInterest.Type.SHOP);
         } else if (id == R.id.nav_events) {
-            hideAllMarkers();
-            eventMarker.setVisible(true);
+            showMarker(ObjectOfInterest.Type.EVENT);
         } else if (id == R.id.nav_all) {
             showAllMarkers();
         } else if (id == R.id.nav_discount) {
@@ -272,16 +277,16 @@ public class Navigation_Activity extends AppCompatActivity
             }
         }
 
-        if(requestCode == 1000){
-            if (resultCode == -1){
+        if (requestCode == 1000) {
+            if (resultCode == -1) {
                 aroundDialogInit().show();
-            }else{
+            } else {
                 Toast.makeText(this, "User denied permission", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    private void checkGPS(){
+    private void checkGPS() {
 
         if (googleApiClient == null) {
             googleApiClient = new GoogleApiClient.Builder(this)
@@ -290,54 +295,59 @@ public class Navigation_Activity extends AppCompatActivity
                     .addOnConnectionFailedListener(this).build();
             googleApiClient.connect();
         }
-            LocationRequest locationRequest = LocationRequest.create();
-            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            locationRequest.setInterval(30 * 1000);
-            locationRequest.setFastestInterval(5 * 1000);
-            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                    .addLocationRequest(locationRequest);
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(30 * 1000);
+        locationRequest.setFastestInterval(5 * 1000);
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
 
-            //**************************
-            builder.setAlwaysShow(true); //this is the key ingredient
-            //**************************
+        //**************************
+        builder.setAlwaysShow(true); //this is the key ingredient
+        //**************************
 
-            PendingResult<LocationSettingsResult> result =
-                    LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
-            result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-                @Override
-                public void onResult(LocationSettingsResult result) {
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(LocationSettingsResult result) {
 
-                    final Status status = result.getStatus();
-                    final LocationSettingsStates state = result.getLocationSettingsStates();
+                final Status status = result.getStatus();
+                final LocationSettingsStates state = result.getLocationSettingsStates();
 
-                    switch (status.getStatusCode()) {
+                switch (status.getStatusCode()) {
 
-                        case LocationSettingsStatusCodes.SUCCESS:
-                            aroundDialogInit().show();
-                            break;
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        aroundDialogInit().show();
+                        break;
 
-                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                            // Location settings are not satisfied. But could be fixed by showing the user
-                            // a dialog.
-                            try {
-                                // Show the dialog by calling startResolutionForResult(),
-                                // and check the result in onActivityResult().
-                                status.startResolutionForResult(
-                                        Navigation_Activity.this, 1000);
-                            } catch (IntentSender.SendIntentException e) {
-                                // Ignore the error.
-                            }
-                            break;
-                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            Toast.makeText(Navigation_Activity.this, "Unable to change turn GPS on, please do so manually", Toast.LENGTH_LONG).show();
-                            break;
-                    }
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        // Location settings are not satisfied. But could be fixed by showing the user
+                        // a dialog.
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),
+                            // and check the result in onActivityResult().
+                            status.startResolutionForResult(
+                                    Navigation_Activity.this, 1000);
+                        } catch (IntentSender.SendIntentException e) {
+                            // Ignore the error.
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        Toast.makeText(Navigation_Activity.this, "Unable to change turn GPS on, please do so manually", Toast.LENGTH_LONG).show();
+                        break;
                 }
-            });
+            }
+        });
 
     }
 
     private Dialog aroundDialogInit() {
+
+        error = false;
+        getLocation();
+        if (error)
+            throw new EmptyStackException();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(Navigation_Activity.this);
         LayoutInflater inflater = Navigation_Activity.this.getLayoutInflater();
@@ -347,7 +357,7 @@ public class Navigation_Activity extends AppCompatActivity
                 .setPositiveButton(R.string.around_dialog_ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        Toast.makeText(Navigation_Activity.this, "Success" + progress_value, Toast.LENGTH_SHORT).show();
+                     //   Toast.makeText(Navigation_Activity.this, "Success" + progress_value, Toast.LENGTH_SHORT).show();
                         aroundMe();
                     }
                 })
@@ -371,7 +381,7 @@ public class Navigation_Activity extends AppCompatActivity
         seekBar.setProgress(30);
         progress_value = 3.0;
         seekBar.setMax(45);
-        seekText.setText(String.format(text, seekBar.getProgress()/10.0));
+        seekText.setText(String.format(text, seekBar.getProgress() / 10.0));
 
         seekBar.setOnSeekBarChangeListener(
                 new SeekBar.OnSeekBarChangeListener() {
@@ -396,7 +406,55 @@ public class Navigation_Activity extends AppCompatActivity
 
     }
 
+    private void getLocation() {
+        // Acquire a reference to the system Location Manager
+        final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+
+                myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                if (ActivityCompat.checkSelfPermission(Navigation_Activity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(Navigation_Activity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    error = true;
+                    return;
+                }
+                locationManager.removeUpdates(this);
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            public void onProviderEnabled(String provider) {
+            }
+
+            public void onProviderDisabled(String provider) {
+            }
+        };
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            error = true;
+            Toast.makeText(this, "There was a problem with getting your location", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+    }
+
     private void aroundMe() {
+
+        int distance = (int) (progress_value*1000);
+        //Toast.makeText(this, Integer.toString(distance), Toast.LENGTH_SHORT).show();
+        if(myLocation == null) {
+            Toast.makeText(this, "Could not get location", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        hideAllMarkers();
+
+        for (Marker marker : markers) {
+            if (SphericalUtil.computeDistanceBetween(myLocation, marker.getPosition()) < distance) {
+                marker.setVisible(true);
+            }
+        }
 
     }
 
@@ -424,24 +482,10 @@ public class Navigation_Activity extends AppCompatActivity
         ArrayList<ObjectOfInterest> objects = ol.getObjects();
 
         for(ObjectOfInterest model : objects){
-            switch (model.getType()){
-                case HOTEL:
-                    hotelMarker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
-                    hotelMarker.setTag(model);
-                    break;
-                case SHOP:
-                    shopMarker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
-                    shopMarker.setTag(model);
-                    break;
-                case SIGHT:
-                    sightMarker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
-                    sightMarker.setTag(model);
-                    break;
-                case EVENT:
-                    eventMarker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
-                    eventMarker.setTag(model);
-                    break;
-            }
+            Marker marker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
+            marker.setTag(model);
+            markers.add(marker);
+
             //  mClusterManager.addItem(model);
         }
 
@@ -504,18 +548,26 @@ public class Navigation_Activity extends AppCompatActivity
 
     private void hideAllMarkers(){
 
-        hotelMarker.setVisible(false);
-        shopMarker.setVisible(false);
-        eventMarker.setVisible(false);
-        sightMarker.setVisible(false);
+        for (Marker marker : markers) {
+            marker.setVisible(false);
+        }
     }
 
     private void showAllMarkers(){
 
-        hotelMarker.setVisible(true);
-        shopMarker.setVisible(true);
-        eventMarker.setVisible(true);
-        sightMarker.setVisible(true);
+        for (Marker marker : markers) {
+            marker.setVisible(true);
+        }
+    }
+
+    private void showMarker(ObjectOfInterest.Type oiType){
+        for (Marker marker : markers) {
+            ObjectOfInterest oi = (ObjectOfInterest) marker.getTag();
+            if (oi.getType().equals(oiType))
+                marker.setVisible(true);
+            else
+                marker.setVisible(false);
+        }
     }
 
     public boolean onMarkerClick(final Marker marker) {
