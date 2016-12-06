@@ -72,6 +72,10 @@
     <string name="desc_date">Click to choose date</string>
     <string name="terms_and_conditions">I am familiar with the terms and conditions</string>
 
+    <string name="menu_search_destination">Destination</string>
+    <string name="menu_search_people">Number of people</string>
+    <string name="menu_search_search">Search</string>
+
 
     <string-array name="people_count">
         <item>0</item>

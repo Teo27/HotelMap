@@ -11,6 +11,7 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -21,7 +22,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -34,6 +37,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -73,6 +77,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.maps.android.SphericalUtil;
 import com.google.maps.android.clustering.ClusterManager;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -96,11 +101,12 @@ public class Navigation_Activity extends AppCompatActivity
     private GoogleApiClient googleApiClient;
     private AlertDialog alertDialog = null;
     private ClusterManager<ObjectOfInterest> mClusterManager;
-    private TextView arrival, departure;
+    private TextView arrival, departure, hotelCounter, shopCounter, sightCounter, eventCounter, allCounter;
     private NavigationView navigationView;
     private List<Marker> markers = new ArrayList<>();
     private Boolean error = false;
     private LatLng myLocation;
+    private String searchString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,9 +133,7 @@ public class Navigation_Activity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO Make search
-                //         Intent intent = new Intent();
-                //         startActivity(intent);
+                searchDialogInit().show();
             }
         });
 
@@ -145,14 +149,35 @@ public class Navigation_Activity extends AppCompatActivity
         navigationView.getMenu().getItem(item_selected).setChecked(true);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //Navigation Drawer counters
+        hotelCounter = (TextView) MenuItemCompat.getActionView(navigationView.getMenu().findItem(R.id.nav_hotels));
+        eventCounter = (TextView) MenuItemCompat.getActionView(navigationView.getMenu().findItem(R.id.nav_events));
+        shopCounter = (TextView) MenuItemCompat.getActionView(navigationView.getMenu().findItem(R.id.nav_shops));
+        sightCounter = (TextView) MenuItemCompat.getActionView(navigationView.getMenu().findItem(R.id.nav_sights));
+        allCounter = (TextView) MenuItemCompat.getActionView(navigationView.getMenu().findItem(R.id.nav_all));
+
+        counterConfig();
+
         //Initializing object on screens
         spinnerInit();
+    }
 
-        //test
-    /*    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkLocationPermission();
-        }*/
+    private void counterConfig() {
 
+        hotelCounter.setGravity(Gravity.CENTER_VERTICAL);
+        hotelCounter.setTypeface(null, Typeface.BOLD);
+
+        eventCounter.setGravity(Gravity.CENTER_VERTICAL);
+        eventCounter.setTypeface(null, Typeface.BOLD);
+
+        sightCounter.setGravity(Gravity.CENTER_VERTICAL);
+        sightCounter.setTypeface(null, Typeface.BOLD);
+
+        shopCounter.setGravity(Gravity.CENTER_VERTICAL);
+        shopCounter.setTypeface(null, Typeface.BOLD);
+
+        allCounter.setGravity(Gravity.CENTER_VERTICAL);
+        allCounter.setTypeface(null, Typeface.BOLD);
     }
 
     @Override
@@ -209,16 +234,21 @@ public class Navigation_Activity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_hotel) {
+        if (id == R.id.nav_hotels) {
             showMarker(ObjectOfInterest.Type.HOTEL);
+            setTitle("Hotels");
         } else if (id == R.id.nav_sights) {
             showMarker(ObjectOfInterest.Type.SIGHT);
+            setTitle("Sights");
         } else if (id == R.id.nav_shops) {
             showMarker(ObjectOfInterest.Type.SHOP);
+            setTitle("Shops");
         } else if (id == R.id.nav_events) {
             showMarker(ObjectOfInterest.Type.EVENT);
+            setTitle("Events");
         } else if (id == R.id.nav_all) {
             showAllMarkers();
+            setTitle("Hotel Map");
         } else if (id == R.id.nav_discount) {
             Toast.makeText(this, "Резервирай с отстъпка", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_around) {
@@ -466,8 +496,6 @@ public class Navigation_Activity extends AppCompatActivity
         settings.setMapToolbarEnabled(false);
         map.getUiSettings().setRotateGesturesEnabled(false);
 
-
-
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
         mClusterManager = new ClusterManager<ObjectOfInterest>(this,map);
@@ -481,16 +509,41 @@ public class Navigation_Activity extends AppCompatActivity
         ol.setup();
         ArrayList<ObjectOfInterest> objects = ol.getObjects();
 
+        int hotelScore,eventScore,shopScore,sightScore;
+        hotelScore = eventScore = shopScore = sightScore = 0;
+
         for(ObjectOfInterest model : objects){
             Marker marker = map.addMarker(new MarkerOptions().position(model.getPosition()).icon(BitmapDescriptorFactory.fromBitmap(infoWindowInit(model))));
             marker.setTag(model);
             markers.add(marker);
 
             //  mClusterManager.addItem(model);
+
+            switch (model.getType()){
+                case HOTEL:
+                    hotelScore++;
+                    hotelCounter.setText(String.valueOf(hotelScore));
+                    break;
+                case EVENT:
+                    eventScore++;
+                    eventCounter.setText(String.valueOf(eventScore));
+                    break;
+                case SHOP:
+                    shopScore++;
+                    shopCounter.setText(String.valueOf(shopScore));
+                    break;
+                case SIGHT:
+                    sightScore++;
+                    sightCounter.setText(String.valueOf(sightScore));
+                    break;
+            }
         }
+
+        allCounter.setText(String.valueOf(markers.size()));
 
         onNavigationItemSelected(navigationView.getMenu().getItem(item_selected));
 
+        //set camera start destination
         LatLngBounds.Builder b = new LatLngBounds.Builder();
         b.include(new LatLng(44.214555,22.67459));
         b.include(new LatLng(41.236022,25.288167));
@@ -777,6 +830,141 @@ public class Navigation_Activity extends AppCompatActivity
         return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
+    private Dialog searchDialogInit(){
+
+        //TODO Receive destination
+        String[] Cities = new String[] { "Varna",
+                "Shumen", "Burgas", "Plovdiv", "Sofia" };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Navigation_Activity.this);
+        LayoutInflater inflater = Navigation_Activity.this.getLayoutInflater();
+        View dialog_layout = inflater.inflate(R.layout.menu_search, null);
+
+        builder.setView(dialog_layout);
+        alertDialog = builder.create();
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, Cities);
+        final AutoCompleteTextView textView = (AutoCompleteTextView) dialog_layout.findViewById(R.id.menu_search_edit);
+        textView.setAdapter(adapter);
+
+        arrival = (TextView) dialog_layout.findViewById(R.id.menu_search_date_arrive);
+        departure = (TextView) dialog_layout.findViewById(R.id.menu_search_date_depart);
+
+        ImageView arrive_btn = (ImageView) dialog_layout.findViewById(R.id.menu_search_date_arrive_btn);
+        ImageView depart_btn = (ImageView) dialog_layout.findViewById(R.id.menu_search_date_depart_btn);
+
+        Button searchBtn = (Button) dialog_layout.findViewById(R.id.menu_search_btn);
+        final Spinner people = (Spinner) dialog_layout.findViewById(R.id.menu_search_people);
+
+        ArrayAdapter<CharSequence> adapterSpinner = ArrayAdapter.createFromResource(this,
+                R.array.people_count, android.R.layout.simple_spinner_item);
+        adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        people.setAdapter(adapterSpinner);
+
+        arrive_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment newFragment = new DatePick();
+
+                Bundle args = new Bundle();
+                args.putBoolean("state", true);
+                if(departure != null){
+                    args.putString("max_date",departure.getText().toString());
+                }
+                newFragment.setArguments(args);
+
+                newFragment.show(getSupportFragmentManager(), "dateArrive");
+            }
+        });
+
+        depart_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(arrival.getText().length() > 0) {
+                    DialogFragment newFragment = new DatePick();
+
+                    Bundle args = new Bundle();
+                    args.putBoolean("state", false);
+                    args.putString("min_date", arrival.getText().toString());
+                    newFragment.setArguments(args);
+
+                    newFragment.show(getSupportFragmentManager(), "dateDepart");
+                }else
+                    Toast.makeText(Navigation_Activity.this, "Please select a date of arrival first", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String ppl = "people";
+                int peopleNum = Integer.parseInt(people.getSelectedItem().toString());
+                if(peopleNum == 1)
+                    ppl = "person";
+                int days = daysDifference();
+                if(days == -1)
+                    Toast.makeText(Navigation_Activity.this, "There was an error with the dates", Toast.LENGTH_SHORT).show();
+
+                //TODO switch to %s
+                searchString = textView.getText().toString() + ", " + peopleNum + " " + ppl + ", " + days + " days";
+
+                setTitle(searchString);
+
+                alertDialog.dismiss();
+            }
+        });
+
+        alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+
+                search(textView.getText().toString());
+
+            }
+        });
+
+        return alertDialog;
+    }
+
+    private int daysDifference(){
+
+        SimpleDateFormat simpleDate =  new SimpleDateFormat("dd/MM/yyyy");
+        Calendar calA = Calendar.getInstance();
+        Calendar calD = Calendar.getInstance();
+
+        try {
+            calA.setTime(simpleDate.parse(arrival.getText().toString()));
+            calD.setTime(simpleDate.parse(departure.getText().toString()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return -1;
+        }
+
+        // Get the represented date in milliseconds
+        long milis1 = calA.getTimeInMillis();
+        long milis2 = calD.getTimeInMillis();
+
+        // Calculate difference in milliseconds
+        long diff = Math.abs(milis2 - milis1);
+        int daysDifference = (int)(diff / (24 * 60 * 60 * 1000));
+
+        return daysDifference;
+    }
+
+    private void search(String city){
+
+        for (Marker marker : markers) {
+            ObjectOfInterest oi = (ObjectOfInterest) marker.getTag();
+            if (oi.getAddress().equals(city))
+                marker.setVisible(true);
+            else
+                marker.setVisible(false);
+        }
+    }
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
@@ -792,4 +980,3 @@ public class Navigation_Activity extends AppCompatActivity
 
     }
 }
-

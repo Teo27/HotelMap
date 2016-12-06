@@ -1,27 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <group android:checkableBehavior="single" android:id="@+id/nav_search">
         <item
-            android:id="@+id/nav_hotel"
+            android:id="@+id/nav_hotels"
             android:icon="@drawable/ic_hotel"
+            app:actionViewClass="android.widget.TextView"
+            app:showAsAction="ifRoom"
             android:title="@string/nav_hotel" />
         <item
             android:id="@+id/nav_sights"
             android:icon="@drawable/ic_sight"
+            app:actionViewClass="android.widget.TextView"
+            app:showAsAction="ifRoom"
             android:title="@string/nav_sights" />
         <item
             android:id="@+id/nav_shops"
             android:icon="@drawable/ic_shop"
+            app:actionViewClass="android.widget.TextView"
+            app:showAsAction="ifRoom"
             android:title="@string/nav_shops" />
         <item
             android:id="@+id/nav_events"
             android:icon="@drawable/ic_event"
+            app:actionViewClass="android.widget.TextView"
+            app:showAsAction="ifRoom"
             android:title="@string/nav_events" />
         <item
             android:id="@+id/nav_all"
             android:icon="@drawable/ic_all"
+            app:actionViewClass="android.widget.TextView"
+            app:showAsAction="ifRoom"
             android:title="@string/nav_all" />
 
     </group>

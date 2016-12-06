@@ -31,7 +31,6 @@
         android:textColor="#000000"/>
 </RelativeLayout>
 
-
     <TableLayout
         android:layout_below="@+id/splash_search_top"
         android:layout_width="match_parent"
@@ -42,92 +41,92 @@
 
         <TableRow
             android:weightSum="10">
+
             <ImageButton
                 android:id="@+id/splash_hotels"
                 style="@style/splash_btn"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_hotel"
-                android:contentDescription="@string/spl_hotels"
-                />
+                android:contentDescription="@string/spl_hotels" />
 
             <ImageButton
                 android:id="@+id/splash_sights"
                 style="@style/splash_btn"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_sight"
-                android:contentDescription="@string/spl_sights"
-                />
+                android:contentDescription="@string/spl_sights" />
 
             <ImageButton
                 android:id="@+id/splash_shops"
                 style="@style/splash_btn"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_shop"
-                android:contentDescription="@string/spl_shops"
-                />
+                android:contentDescription="@string/spl_shops" />
 
             <ImageButton
                 android:id="@+id/splash_events"
                 style="@style/splash_btn"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_event"
-                android:contentDescription="@string/spl_events"
-               />
+                android:contentDescription="@string/spl_events" />
 
             <ImageButton
                 android:id="@+id/splash_all"
                 style="@style/splash_btn"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_all"
-                android:contentDescription="@string/spl_all"
-                />
+                android:contentDescription="@string/spl_all" />
         </TableRow>
 
         <TableRow
             android:layout_marginTop="5dp">
+
             <TextView
                 android:textColor="#000000"
                 android:textSize="20sp"
                 android:text="@string/spl_hotels"
-                android:layout_weight=".2"
+                android:layout_width="0px"
+                android:layout_weight="1"
                 android:textAlignment="center"/>
 
             <TextView
                 android:textColor="#000000"
                 android:textSize="20sp"
                 android:text="@string/spl_sights"
-                android:layout_weight=".2"
+                android:layout_width="0px"
+                android:layout_weight="1"
                 android:textAlignment="center"/>
 
             <TextView
                 android:textColor="#000000"
                 android:textSize="20sp"
                 android:text="@string/spl_shops"
-                android:layout_weight=".2"
+                android:layout_width="0px"
+                android:layout_weight="1"
                 android:textAlignment="center"/>
 
             <TextView
                 android:textColor="#000000"
                 android:textSize="20sp"
                 android:text="@string/spl_events"
-                android:layout_weight=".2"
+                android:layout_width="0px"
+                android:layout_weight="1"
                 android:textAlignment="center"/>
 
             <TextView
                 android:textColor="#000000"
                 android:textSize="20sp"
                 android:text="@string/spl_all"
-                android:layout_weight=".2"
+                android:layout_width="0px"
+                android:layout_weight="1"
                 android:textAlignment="center"/>
         </TableRow>
 
-
     </TableLayout>
-
 
 </RelativeLayout>

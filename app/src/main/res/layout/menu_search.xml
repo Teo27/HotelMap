@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15dp">
+
+    <TextView
+        android:text="@string/menu_search_destination"
+        android:textColor="#000"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <AutoCompleteTextView
+        android:id="@+id/menu_search_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:imeOptions="actionSearch"
+        android:inputType="textAutoComplete|textAutoCorrect"
+        android:textColor="#000" >
+        <requestFocus />
+    </AutoCompleteTextView>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp">
+
+        <TableRow android:weightSum="2">
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:text="@string/res_arrive"
+                android:textColor="#000"
+                android:textSize="20sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:text="@string/res_depart"
+                android:textColor="#000"
+                android:textSize="20sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+        </TableRow>
+
+        <TableRow android:weightSum="2">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:weightSum="5"
+                android:layout_width="0dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp">
+
+                <TextView
+                    android:id="@+id/menu_search_date_arrive"
+                    android:background="#fff"
+                    android:layout_weight="4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000"
+                    android:textSize="20sp"
+                    android:maxLines="1"
+                    android:ellipsize="end"/>
+
+                <ImageButton
+                    android:id="@+id/menu_search_date_arrive_btn"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_around"
+                    android:background="#00000000"
+                    android:contentDescription="@string/desc_date"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:weightSum="5"
+                android:layout_width="0dp">
+
+                <TextView
+                    android:id="@+id/menu_search_date_depart"
+                    android:background="#fff"
+                    android:layout_weight="4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000"
+                    android:textSize="20sp"
+                    android:maxLines="1"
+                    android:ellipsize="end"/>
+
+                <ImageButton
+                    android:id="@+id/menu_search_date_depart_btn"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_around"
+                    android:background="#00000000"
+                    android:contentDescription="@string/desc_date"/>
+
+            </LinearLayout>
+        </TableRow>
+
+    </TableLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:text="@string/menu_search_people"
+            android:textColor="#000"
+            android:textSize="20sp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <Spinner
+            android:id="@+id/menu_search_people"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+
+    </LinearLayout>
+
+    <Button
+        android:layout_gravity="center"
+        android:textAllCaps="false"
+        android:id="@+id/menu_search_btn"
+        android:text="@string/menu_search_search"
+        android:background="#4CAF50"
+        android:textColor="#FFFFFF"
+        android:textSize="17sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"/>
+
+</LinearLayout>
